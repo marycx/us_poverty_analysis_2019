@@ -1,26 +1,27 @@
 #### Preamble ####
 # Purpose: Downloads and saves the data from [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 11 February 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
-# License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Author: Mary Cheng
+# Date: 26 March 2024
+# Contact: maryc.cheng@mail.utoronto.ca
+# License: --
+# Pre-requisites: --
+# United States Census Bureau: https://www.census.gov/data/datasets/2019/demo/supplemental-poverty-measure/revised-research.html
 
 
 #### Workspace setup ####
-library(opendatatoronto)
+library(haven)
 library(tidyverse)
-# [...UPDATE THIS...]
+
 
 #### Download data ####
-# [...ADD CODE HERE TO DOWNLOAD...]
+raw_poverty_data <- read_dta('https://www2.census.gov/programs-surveys/supplemental-poverty-measure/datasets/2019-revised/spm2019_newmeth.dta')
 
+raw_poverty_data <-
+  raw_poverty_data |>
+  select(spm_poor, spm_tenmortstatus, spm_totval, spm_hage)
 
 
 #### Save data ####
-# [...UPDATE THIS...]
-# change the_raw_data to whatever name you assigned when you downloaded it.
-write_csv(the_raw_data, "inputs/data/raw_data.csv") 
+write_csv(raw_poverty_data, "data/raw_data/raw_poverty_data.csv") 
 
          
