@@ -10,6 +10,8 @@
 
 #### Workspace setup ####
 library(tidyverse)
+library(arrow)
 # [...UPDATE THIS...]
 
 #### Test data ####
+test_poverty_data = read_parquet("data/analysis_data/cleaned_poverty_data.parquet")
