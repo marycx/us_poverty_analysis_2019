@@ -1,44 +1,70 @@
 #### Preamble ####
-# Purpose: Cleans the raw plane data recorded by two observers..... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 6 April 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
-# License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Purpose: Cleans the raw poverty data in the data folder
+# Author: Mary Cheng
+# Date: 26 March 2024
+# Contact: maryc.cheng@mail.utoronto.ca
+# License: --
+# Pre-requisites: run 01-download_data.R in scripts folder first to get the raw data
+
 
 #### Workspace setup ####
 library(tidyverse)
+library(arrow)
+
 
 #### Clean data ####
-raw_data <- read_csv("inputs/data/plane_data.csv")
+# read in raw data
+raw_poverty_data <-
+  read_csv(
+    "data/raw_data/raw_poverty_data.csv"
+  )
 
-cleaned_data <-
-  raw_data |>
-  janitor::clean_names() |>
-  select(wing_width_mm, wing_length_mm, flying_time_sec_first_timer) |>
-  filter(wing_width_mm != "caw") |>
-  mutate(
-    flying_time_sec_first_timer = if_else(flying_time_sec_first_timer == "1,35",
-                                   "1.35",
-                                   flying_time_sec_first_timer)
+# first rename column names to increase readability
+# remove duplicate entries (because all those people live in the same household)
+# filter out ages under 25
+# filter out income is negative
+# mutate income and age variables into categorical variables
+  # income level: below 10000, 10000 - 49999, 50000 - 99999, 100000 - 1499999, 150000 - 199999, 200000 - 249999, above 250000
+  # age group: 25-34, 35-44, 45-54, 55-64, above 65
+# poverty status: 1-in poverty; 0-not in poverty
+# mortgage status: 1-Owner with Mortgage; 2-Owner without Mortgage; 3-Renter
+
+cleaned_poverty_data <-
+  raw_poverty_data |>
+  rename(
+    poverty_status = spm_poor, 
+    mortgage = spm_tenmortstatus, 
+    income = spm_totval, 
+    age = spm_hage
   ) |>
-  mutate(wing_width_mm = if_else(wing_width_mm == "490",
-                                 "49",
-                                 wing_width_mm)) |>
-  mutate(wing_width_mm = if_else(wing_width_mm == "6",
-                                 "60",
-                                 wing_width_mm)) |>
+  distinct() |>
+  filter(age > 25) |>
+  filter(income > 0) |>
   mutate(
-    wing_width_mm = as.numeric(wing_width_mm),
-    wing_length_mm = as.numeric(wing_length_mm),
-    flying_time_sec_first_timer = as.numeric(flying_time_sec_first_timer)
-  ) |>
-  rename(flying_time = flying_time_sec_first_timer,
-         width = wing_width_mm,
-         length = wing_length_mm
-         ) |> 
-  tidyr::drop_na()
+    income = case_when(
+      income < 10000 ~ "below 10k",
+      10000 <= income & income < 49999 ~ "10k-50k",
+      50000 <= income & income < 99999 ~ "50k-100k",
+      100000 <= income & income < 149999 ~ "100k-150k",
+      150000 <= income & income < 199999 ~ "150k-200k",
+      200000 <= income & income < 249999 ~ "200k-150k",
+      250000 <= income ~ "above 250k"
+    ),
+    age = case_when(
+      25 <= age & age <= 34 ~ "25-34",
+      35 <= age & age <= 44 ~ "35-44",
+      45 <= age & age <= 54 ~ "45-54",
+      55 <= age & age <= 64 ~ "55-64",
+      65 <= age ~ "above 65"
+    ),
+    poverty_status = if_else(poverty_status == 1, "In poverty", "Not in poverty"),
+    mortgage = case_when(
+      mortgage == 1 ~ "Owner with mortgage",
+      mortgage == 2 ~ "Owner without mortgage",
+      mortgage == 3 ~ "Renter",
+    )
+  )
+
 
 #### Save data ####
-write_csv(cleaned_data, "outputs/data/analysis_data.csv")
+write_parquet(x = cleaned_poverty_data, sink = "data/analysis_data/cleaned_poverty_data.parquet")
