@@ -23,11 +23,11 @@ raw_poverty_data <-
 # remove duplicate entries (because all those people live in the same household)
 # filter out ages under 25
 # filter out income is negative
+# poverty status: 1-in poverty; 0-not in poverty
+# mortgage status: 1-Owner with Mortgage; 2-Owner without Mortgage; 3-Renter
 # mutate income and age variables into categorical variables
   # income level: below 10000, 10000 - 49999, 50000 - 99999, 100000 - 1499999, 150000 - 199999, 200000 - 249999, above 250000
   # age group: 25-34, 35-44, 45-54, 55-64, above 65
-# poverty status: 1-in poverty; 0-not in poverty
-# mortgage status: 1-Owner with Mortgage; 2-Owner without Mortgage; 3-Renter
 
 cleaned_poverty_data <-
   raw_poverty_data |>
@@ -41,6 +41,12 @@ cleaned_poverty_data <-
   filter(age > 25) |>
   filter(income > 0) |>
   mutate(
+    poverty_status = if_else(poverty_status == 1, "In poverty", "Not in poverty"),
+    mortgage = case_when(
+      mortgage == 1 ~ "Owner with mortgage",
+      mortgage == 2 ~ "Owner without mortgage",
+      mortgage == 3 ~ "Renter",
+    ),
     income = case_when(
       income < 10000 ~ "below 10k",
       10000 <= income & income < 49999 ~ "10k-50k",
@@ -56,12 +62,6 @@ cleaned_poverty_data <-
       45 <= age & age <= 54 ~ "45-54",
       55 <= age & age <= 64 ~ "55-64",
       65 <= age ~ "above 65"
-    ),
-    poverty_status = if_else(poverty_status == 1, "In poverty", "Not in poverty"),
-    mortgage = case_when(
-      mortgage == 1 ~ "Owner with mortgage",
-      mortgage == 2 ~ "Owner without mortgage",
-      mortgage == 3 ~ "Renter",
     )
   )
 

@@ -10,7 +10,6 @@
 #### Workspace setup ####
 library(tidyverse)
 library(arrow)
-# [...UPDATE THIS...]
 
 #### Test data ####
 # read in cleaned data
