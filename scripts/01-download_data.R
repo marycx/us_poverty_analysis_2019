@@ -1,5 +1,5 @@
 #### Preamble ####
-# Purpose: Downloads and saves the data from [...UPDATE THIS...]
+# Purpose: Downloads and saves the data from United States Census Bureau
 # Author: Mary Cheng
 # Date: 26 March 2024
 # Contact: maryc.cheng@mail.utoronto.ca
