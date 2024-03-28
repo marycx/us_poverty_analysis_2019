@@ -49,5 +49,9 @@ saveRDS(
   file = "models/poverty_prediction_model.rds"
 )
 
+test_file("scripts/05-test_class.R")
+test_file("scripts/06-test_observations.R")
+test_file("scripts/07-test_coefficients.R")
+
 
 
