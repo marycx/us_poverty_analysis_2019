@@ -2,9 +2,8 @@
 title: "My title"
 subtitle: "My subtitle if needed"
 author: 
-  - First author
-  - Another author
-thanks: "Code and data are available at: LINK."
+  - Mary Cheng
+thanks: "Code and data are available at: https://github.com/marycx/us_poverty_analysis_2019.git"
 date: today
 date-format: long
 abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
@@ -19,7 +18,17 @@ bibliography: references.bib
 #| message: false
 
 library(tidyverse)
-library(palmerpenguins)
+library(arrow)
+library(here)
+library(rstanarm)
+library(modelsummary)
+library(ggplot2)
+library(knitr)
+library(marginaleffects)
+library(plotly)
+library(tibble)
+library(margins)
+library(kableExtra)
 ```
 
 
@@ -33,42 +42,19 @@ The remainder of this paper is structured as follows. @sec-data....
 
 # Data {#sec-data}
 
+```{r}
+
+```
+
+
 Some of our data is of penguins (@fig-bills), from @palmerpenguins.
 
-```{r}
-#| label: fig-bills
-#| fig-cap: Bills of penguins
-#| echo: false
 
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = "none") +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
-```
 
 Talk more about it.
 
 And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
 
-```{r}
-#| label: fig-planes
-#| fig-cap: Relationship between wing length and width
-#| echo: false
-#| warning: false
-#| message: false
-
-analysis_data <- read_csv(here::here("data/analysis_data/analysis_data.csv"))
-
-analysis_data |> 
-  ggplot(aes(x = width, y = length)) +
-  geom_point(alpha = 0.8) +
-  theme_minimal() +
-  labs(x = "Wing width (mm)",
-       y = "Wing length (mm)")
-```
 
 Talk way more about it. 
 
@@ -85,12 +71,11 @@ Here we briefly describe the Bayesian analysis model used to investigate... Back
 Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.  
 
 \begin{align} 
-y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
-\mu_i &= \alpha + \beta_i + \gamma_i\\
+y_i|\pi_i &\sim \mbox{Bern}(\pi_i) \\
+\mbox{logit}(\pi_i) &= \alpha + \beta_1 \times \mbox{mortgage}_i + \beta_2 \times \mbox{income}_i + \beta_3 \times \mbox{age}_i\\
 \alpha &\sim \mbox{Normal}(0, 2.5) \\
-\beta &\sim \mbox{Normal}(0, 2.5) \\
-\gamma &\sim \mbox{Normal}(0, 2.5) \\
-\sigma &\sim \mbox{Exponential}(1)
+\beta_1 &\sim \mbox{Normal}(0, 2.5) \\
+\beta_2 &\sim \mbox{Normal}(0, 2.5)
 \end{align}
 
 We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
@@ -112,27 +97,18 @@ Our results are summarized in @tbl-modelresults.
 #| eval: true
 #| warning: false
 #| message: false
-
-library(rstanarm)
-
-first_model <-
-  readRDS(file = here::here("models/first_model.rds"))
-```
-
-```{r}
-#| echo: false
-#| eval: true
 #| label: tbl-modelresults
-#| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
-#| warning: false
+#| tbl-cap: "Explanatory model Poverty Prediction (n = 1000)"
 
-modelsummary::modelsummary(
+poverty_prediction_model <-
+  readRDS(file = here::here("models/poverty_prediction_model.rds"))
+
+modelsummary(
   list(
-    "First model" = first_model
+    "In poverty" = poverty_prediction_model
   ),
-  statistic = "mad",
-  fmt = 2
-)
+  statistic = "mad"
+  )
 ```
 
 
@@ -158,59 +134,150 @@ Weaknesses and next steps should also be included.
 
 # Appendix {-}
 
-
-# Additional data details
-
 # Model details {#sec-model-details}
 
 ## Posterior predictive check
-
-In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
-
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
+In @fig-post_dist, we implement a posterior distribution. This compares the poverty status of people in reality with the prediction results from the posterior distribution from our logistic regression model. It can be seen that the posterior distribution fits well with the actual data. It suggests that the posterior is able to generate simulated data that closely resembles the actual data [@bayes_post], because the model accurately captures the observed data patterns. This is good because it indicates that our logistic regression model is a good representation of the actual poverty status in the 2019 poverty data from United States Census Bureau.
 
 ```{r}
-#| eval: true
+#| label: fig-post_dist
+#| fig-cap: Posterior distribution for logistic regression model 
 #| echo: false
-#| message: false
 #| warning: false
-#| label: fig-ppcheckandposteriorvsprior
-#| layout-ncol: 2
-#| fig-cap: "Examining how the model fits, and is affected by, the data"
-#| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
+#| message: false
+#| 
 
-pp_check(first_model) +
-  theme_classic() +
+pp_check(poverty_prediction_model) +
   theme(legend.position = "bottom")
+```
 
-posterior_vs_prior(first_model) +
+@fig-post_prior compares the posterior with the prior. This compares the prior distribution of parameters with the posterior distribution of parameters in our logistic regression model. We can see that half of the model parameters do not change after data are taken into account, while some parameters shift slightly. This shows that the observed data partially matches with our initial belief and expectation about the poverty status of people in the United States in 2019. We can see that for people with income level at "below 10k", the posterior distribution greatly shifts from its prior after we input observed data. This is likely suggesting that the observed data for "below 10k" strongly contradicts our initial belief. This suggests that the majority of people in US who earns less than a total amount of 10k per household annually is in poverty in 2019.
+
+```{r}
+#| label: fig-post_prior
+#| fig-cap: Comparing the posterior with the prior 
+#| echo: false
+#| warning: false
+#| message: false
+
+#### Read data ####
+analysis_data <- read_parquet(here::here("data/analysis_data/cleaned_poverty_data.parquet"))
+
+# Convert variables to factors
+analysis_data$mortgage <- factor(analysis_data$mortgage)
+analysis_data$income <- factor(analysis_data$income)
+analysis_data$age <- factor(analysis_data$age)
+
+# Create poverty_status variable in binary form
+analysis_data$poverty_status <- ifelse(analysis_data$poverty_status == "In poverty", 1, 0)
+
+# Model 1 for n = 1000
+set.seed(215)
+
+poverty_data_reduced <- 
+  analysis_data |> 
+  slice_sample(n = 1000)
+
+posterior_vs_prior(poverty_prediction_model) +
   theme_minimal() +
-  scale_color_brewer(palette = "Set1") +
   theme(legend.position = "bottom") +
   coord_flip()
 ```
 
-## Diagnostics
+## Markov chain Monte Carlo Convergence Check
 
-@fig-stanareyouokay-1 is a trace plot. It shows... This suggests...
+@fig-trace1, @fig-trace2, @fig-trace3 are the trace plots of the model. It tells us if there is existence of signs that the our model runs into issues. We observe lines in all the trace plots are horizontal and oscillating, and have overlaps between the chains. This suggests that there is nothing strange in this trace plot.
 
-@fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
+@fig-rhat is the Rhat plot of the model. It compares the variability within each chain to the variability between chains in MCMC. We can observe that our Rhat plot are all close to 1, and no more than 1.05. This is a good sign because it suggests that the MCMC algorithm has reached convergence for our model. 
+
 
 ```{r}
 #| echo: false
 #| eval: true
 #| message: false
 #| warning: false
-#| label: fig-stanareyouokay
-#| fig-cap: "Checking the convergence of the MCMC algorithm"
-#| fig-subcap: ["Trace plot", "Rhat plot"]
+#| label: fig-trace1
+#| fig-cap: "Trace plot of intercept and mortgage"
+#| fig-subcap: ["Trace plot of Intercept", "Trace plot of owner without mortgage", "Trace plot of renter"]
 #| layout-ncol: 2
 
-plot(first_model, "trace")
-
-plot(first_model, "rhat")
+plot(poverty_prediction_model, "trace", "(Intercept)")
+plot(poverty_prediction_model, "trace", "mortgageOwner without mortgage")
+plot(poverty_prediction_model, "trace", "mortgageRenter")
 ```
 
+```{r}
+#| echo: false
+#| eval: true
+#| message: false
+#| warning: false
+#| label: fig-trace2
+#| fig-cap: "Trace plot of income"
+#| fig-subcap: ["Trace plot of income 10k-50k", "Trace plot of income 150k-200k", "Trace plot of income 200k-250k", "Trace plot of income 50k-100k", "Trace plot of income above 250k", "Trace plot of income below 10k"]
+#| layout-ncol: 2
+
+plot(poverty_prediction_model, "trace", "income10k-50k")
+plot(poverty_prediction_model, "trace", "income150k-200k")
+plot(poverty_prediction_model, "trace", "income200k-250k")
+plot(poverty_prediction_model, "trace", "income50k-100k")
+plot(poverty_prediction_model, "trace", "incomeabove 250k")
+plot(poverty_prediction_model, "trace", "incomebelow 10k")
+```
+
+```{r}
+#| echo: false
+#| eval: true
+#| message: false
+#| warning: false
+#| label: fig-trace3
+#| fig-cap: "Trace plot of employ"
+#| fig-subcap: ["Trace plot of age 35-44", "Trace plot of age 45-54", "Trace plot of age 55-64", "Trace plot of age above 65"]
+#| layout-ncol: 2
+
+plot(poverty_prediction_model, "trace", "age35-44")
+plot(poverty_prediction_model, "trace", "age45-54")
+plot(poverty_prediction_model, "trace", "age55-64")
+plot(poverty_prediction_model, "trace", "ageabove 65")
+```
+
+
+```{r}
+#| echo: false
+#| eval: true
+#| message: false
+#| warning: false
+#| label: fig-rhat
+#| fig-cap: "Rhat plot"
+
+plot(poverty_prediction_model, "rhat")
+```
+```{r}
+#| echo: false
+#| eval: true
+#| warning: false
+#| message: false
+#| label: fig-modelresults1
+#| fig-cap: "Credible intervals for predictors of support for Biden"
+
+modelplot(poverty_prediction_model, conf_level = 0.90, size = 0.2) +
+  labs(x = "90% credibility interval")
+```
+
+
+```{r}
+#| echo: false
+#| eval: true
+#| warning: false
+#| message: false
+#| label: fig-modelresults2
+#| fig-cap: "Credible intervals for predictors of support for Biden with x_axis limits"
+# Create the model plot
+model_plot <- modelplot(poverty_prediction_model, conf_level = 0.90, size = 0.2)
+
+# Modify the x-axis limits
+model_plot + xlim(-20, 20) +  # Adjust the limits as needed
+  labs(x = "90% Credibility Interval")
+```
 
 
 \newpage

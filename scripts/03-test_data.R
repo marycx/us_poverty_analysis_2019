@@ -34,7 +34,11 @@ if (all(test_poverty_data$poverty_status |>
 }
 
 # check the range of data for mortgage
-correct_mortgage <- c("Owner without mortgage", "Owner with mortgage", "Renter")
+correct_mortgage <- 
+  c(
+    "Owner without mortgage", 
+    "Owner with mortgage", 
+    "Renter")
 
 if (all(test_poverty_data$mortgage |>
         unique() %in% correct_mortgage)) 

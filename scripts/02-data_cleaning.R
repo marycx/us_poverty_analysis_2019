@@ -20,7 +20,6 @@ raw_poverty_data <-
   )
 
 # first rename column names to increase readability
-# remove duplicate entries (because all those people live in the same household)
 # filter out ages under 25
 # filter out income is negative
 # poverty status: 1-in poverty; 0-not in poverty
@@ -37,7 +36,6 @@ cleaned_poverty_data <-
     income = spm_totval, 
     age = spm_hage
   ) |>
-  distinct() |>
   filter(age > 25) |>
   filter(income > 0) |>
   mutate(
@@ -53,7 +51,7 @@ cleaned_poverty_data <-
       50000 <= income & income < 99999 ~ "50k-100k",
       100000 <= income & income < 149999 ~ "100k-150k",
       150000 <= income & income < 199999 ~ "150k-200k",
-      200000 <= income & income < 249999 ~ "200k-150k",
+      200000 <= income & income < 249999 ~ "200k-250k",
       250000 <= income ~ "above 250k"
     ),
     age = case_when(
