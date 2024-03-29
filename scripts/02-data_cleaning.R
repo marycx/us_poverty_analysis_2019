@@ -18,34 +18,27 @@ raw_poverty_data <-
   read_csv("data/raw_data/raw_poverty_data.csv")
 
 # first rename column names to increase readability
-# filter out ages under 25
-# filter out income is negative
+# remove duplicate entries
 # poverty status: 1-in poverty; 0-not in poverty
-# marital status: 1 Married - civilian spouse present; 2 Married - armed forces spouse present; 3 Married - spouse absent (excluding separated); 4 Widowed; 5 Divorced; 6 Separated; 7 Never Married
-# mutate income and age variables into categorical variables
+# mortgage state: 1-Owner with Mortgage; 2-Owner without Mortgage or rent-free; 3-Renter
+# mutate income variable into categorical variable
   # income level: below 10000, 10000 - 49999, 50000 - 99999, 100000 - 1499999, 150000 - 199999, 200000 - 249999, above 250000
-  # age group: 25-34, 35-44, 45-54, 55-64, above 65
+# select features: poverty-status, mortgage_state, income
 
 cleaned_poverty_data <-
   raw_poverty_data |>
   rename(
     poverty_status = spm_poor, 
-    marital_status = spm_hmaritalstatus, 
-    income = spm_totval, 
-    age = spm_hage
+    mortgage_state = spm_tenmortstatus, 
+    income = spm_totval
   ) |>
-  filter(age > 25) |>
-  filter(income > 0) |>
+  unique() |>
   mutate(
     poverty_status = if_else(poverty_status == 1, "In poverty", "Not in poverty"),
-    marital_status = case_when(
-      marital_status == 1 ~ "Married - civilian spouse present",
-      marital_status == 2 ~ "Married - armed forces spouse present",
-      marital_status == 3 ~ "Married - spouse absent (excluding separated)",
-      marital_status == 4 ~ "Widowed",
-      marital_status == 5 ~ "Divorced",
-      marital_status == 6 ~ "Separated",
-      marital_status == 7 ~ "Never Married"
+    mortgage_state = case_when(
+      mortgage_state == 1 ~ "Owner with Mortgage",
+      mortgage_state == 2 ~ "Owner without Mortgage or rent-free",
+      mortgage_state == 3 ~ "Renter"
     ),
     income = case_when(
       income < 10000 ~ "below 10k",
@@ -55,15 +48,9 @@ cleaned_poverty_data <-
       150000 <= income & income < 199999 ~ "150k-200k",
       200000 <= income & income < 249999 ~ "200k-250k",
       250000 <= income ~ "above 250k"
-    ),
-    age = case_when(
-      25 <= age & age <= 34 ~ "25-34",
-      35 <= age & age <= 44 ~ "35-44",
-      45 <= age & age <= 54 ~ "45-54",
-      55 <= age & age <= 64 ~ "55-64",
-      65 <= age ~ "above 65"
     )
-  )
+  ) |>
+  select(poverty_status, mortgage_state, income)
 
 
 #### Save data ####

@@ -17,9 +17,8 @@ test_poverty_data <- read_parquet("data/analysis_data/cleaned_poverty_data.parqu
 
 # Check column class poverty_status, marital_status, income, age
 class(test_poverty_data$poverty_status) == "character"
-class(test_poverty_data$marital_status) == "character"
+class(test_poverty_data$mortgage_state) == "character"
 class(test_poverty_data$income) == "character"
-class(test_poverty_data$age) == "character"
 
 # Range of data
 # check the range of data for poverty_status
@@ -33,23 +32,18 @@ if (all(test_poverty_data$poverty_status |>
   "Not all of the poverty_status have been cleaned completely"
 }
 
-# check the range of data for marital_status
-correct_marital_status <- 
+# check the range of data for mortgage_state
+correct_mortgage_state <- 
   c(
-    "Married - civilian spouse present",
-    "Married - armed forces spouse present",
-    "Married - spouse absent (excluding separated)",
-    "Widowed",
-    "Divorced",
-    "Separated",
-    "Never Married")
-
-if (all(test_poverty_data$marital_status |>
-        unique() %in% correct_marital_status)) 
+    "Owner with Mortgage",
+    "Owner without Mortgage or rent-free",
+    "Renter")
+if (all(test_poverty_data$mortgage_state |>
+        unique() %in% correct_mortgage_state)) 
 {
-  "The cleaned marital_status match the expected marital_status"
+  "The cleaned mortgage_state match the expected mortgage_state"
 } else {
-  "Not all of the marital_status have been cleaned completely"
+  "Not all of the mortgage_state have been cleaned completely"
 }
 
 # check the range of data for income
@@ -70,22 +64,3 @@ if (all(test_poverty_data$income |>
 } else {
   "Not all of the income have been cleaned completely"
 }
-
-# check the range of data for age
-correct_age <- 
-  c(
-    "25-34",
-    "35-44",
-    "45-54",
-    "55-64",
-    "above 65"
-  )
-if (all(test_poverty_data$age |>
-        unique() %in% correct_age)) 
-{
-  "The cleaned age match the expected age"
-} else {
-  "Not all of the age have been cleaned completely"
-}
-
-

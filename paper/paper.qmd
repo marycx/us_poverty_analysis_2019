@@ -82,16 +82,12 @@ poverty2019 <-
   poverty2019 |>
   mutate(
     poverty_status = as_factor(poverty_status),
-    marital_status= factor(
-      marital_status,
+    mortgage_state= factor(
+      mortgage_state,
       levels = c(
-      "Married - civilian spouse present",
-      "Married - armed forces spouse present",
-      "Married - spouse absent (excluding separated)",
-      "Widowed",
-      "Divorced",
-      "Separated",
-      "Never Married")
+      "Owner with Mortgage",
+      "Owner without Mortgage or rent-free",
+      "Renter")
     ),
     income = factor(
       income,
@@ -103,18 +99,9 @@ poverty2019 <-
       "150k-200k",
       "200k-250k",
       "above 250k")
-    ),
-    age = factor(
-      age,
-      levels = c(
-      "25-34",
-      "35-44",
-      "45-54",
-      "55-64",
-      "above 65")
     )
   ) |>
-  select(poverty_status, marital_status, income, age)
+  select(poverty_status, mortgage_state, income)
 ```
 
 ```{r}
@@ -143,12 +130,12 @@ poverty2019 |>
 ## Data Visualization
 ```{r}
 #| label: fig-mortgage
-#| fig-cap: The distribution of poverty status by marital status
+#| fig-cap: The distribution of poverty status by mortgage state
 #| echo: false
 #| warning: false
 #| message: false
 poverty2019 |>
-  ggplot(aes(x = marital_status, fill = poverty_status)) +
+  ggplot(aes(x = mortgage_state, fill = poverty_status)) +
   geom_bar(position = "dodge") +
   coord_flip() +
   theme_minimal() +
@@ -156,7 +143,7 @@ poverty2019 |>
         text=element_text(size=6)) +
   scale_fill_brewer(palette = "Set1") +
   labs(
-    x = "Marital status",
+    x = "Mortgage state",
     y = "Number of respondents",
     fill = "Poverty status"
   )
@@ -175,25 +162,6 @@ poverty2019 |>
   scale_fill_brewer(palette = "Set1") +
   labs(
     x = "Income level",
-    y = "Number of respondents",
-    fill = "Poverty status"
-  )
-```
-
-```{r}
-#| label: fig-age
-#| fig-cap: The distribution of poverty status by age group
-#| echo: false
-#| warning: false
-#| message: false
-poverty2019 |>
-  ggplot(aes(x = age, fill = poverty_status)) +
-  geom_bar(position = "dodge") +
-  coord_flip() +
-  theme_minimal() +
-  scale_fill_brewer(palette = "Set1") +
-  labs(
-    x = "Age group",
     y = "Number of respondents",
     fill = "Poverty status"
   )
@@ -291,7 +259,7 @@ pp_check(poverty_prediction_model) +
   theme(legend.position = "bottom")
 ```
 
-@fig-post_prior compares the posterior with the prior. This compares the prior distribution of parameters with the posterior distribution of parameters in our logistic regression model. We can see that half of the model parameters do not change after data are taken into account, while some parameters shift slightly. This shows that the observed data partially matches with our initial belief and expectation about the poverty status of people in the United States in 2019. We can see that for people with income level at "below 10k", the posterior distribution greatly shifts from its prior after we input observed data. This is likely suggesting that the observed data for "below 10k" strongly contradicts our initial belief. This suggests that the majority of people in US who earns less than a total amount of 10k per household annually is in poverty in 2019.
+@fig-post_prior compares the posterior with the prior. This compares the prior distribution of parameters with the posterior distribution of parameters in our logistic regression model. We can see that half of the model parameters do not change after data are taken into account, while some parameters shift slightly. This shows that the observed data partially matches with our initial belief and expectation about the poverty status of people in the United States in 2019. We can see that for people with income level at "below 10k" and "10k-50k", the posterior distributions shift from their prior after we input observed data; their distribution not crossing 0 at all. This is suggesting that the observed data for "below 10k" and "10k-50k" strongly contradict our initial belief. So the majority of people in US who earns less than a total amount of 50k per household annually was in poverty in 2019. Also, the intercept (people who are owners with mortgage and earn 100-150k) shifts to the left; its distribution not crossing 0. This indicates that the actual observation does not match with our prior belief. People in this category was less likely to be in poverty state in 2019 United States.
 
 ```{r}
 #| label: fig-post_prior
@@ -304,9 +272,8 @@ pp_check(poverty_prediction_model) +
 analysis_data <- read_parquet(here::here("data/analysis_data/cleaned_poverty_data.parquet"))
 
 # Convert variables to factors
-analysis_data$marital_status <- factor(analysis_data$marital_status)
+analysis_data$marital_status <- factor(analysis_data$mortgage_state)
 analysis_data$income <- factor(analysis_data$income)
-analysis_data$age <- factor(analysis_data$age)
 
 # Create poverty_status variable in binary form
 analysis_data$poverty_status <- ifelse(analysis_data$poverty_status == "In poverty", 1, 0)
@@ -322,7 +289,7 @@ posterior_vs_prior(poverty_prediction_model, size = 0.1) +
   theme_minimal() +
   theme(legend.position = "bottom") +
   theme(axis.text.x=element_text(hjust=1, vjust=0.5),
-        text=element_text(size=5)) +
+        text=element_text(size=8)) +
   guides(color = guide_legend(ncol = 4))+
   coord_flip()
 ```
@@ -341,16 +308,12 @@ posterior_vs_prior(poverty_prediction_model, size = 0.1) +
 #| warning: false
 #| label: fig-trace1
 #| fig-cap: "Trace plot of intercept and marital status"
-#| fig-subcap: ["Trace plot of Intercept", "Trace plot of Married - civilian spouse present", "Trace plot of Married - armed forces spouse present", "Trace plot of Married - spouse absent (excluding separated)", "Trace plot of Widowed", "Trace plot of Separated", "Trace plot of Never Married"]
+#| fig-subcap: ["Trace plot of Intercept", "Trace plot of Owner without Mortgage or rent-free", "Trace plot of Renter"]
 #| layout-ncol: 2
 
 plot(poverty_prediction_model, "trace", "(Intercept)")
-plot(poverty_prediction_model, "trace", "marital_statusMarried - armed forces spouse present")
-plot(poverty_prediction_model, "trace", "marital_statusMarried - civilian spouse present")
-plot(poverty_prediction_model, "trace", "marital_statusMarried - spouse absent (excluding separated)")
-plot(poverty_prediction_model, "trace", "marital_statusNever Married")
-plot(poverty_prediction_model, "trace", "marital_statusSeparated")
-plot(poverty_prediction_model, "trace", "marital_statusWidowed")
+plot(poverty_prediction_model, "trace", "mortgage_stateOwner without Mortgage or rent-free")
+plot(poverty_prediction_model, "trace", "mortgage_stateRenter")
 ```
 
 ```{r}
@@ -371,21 +334,6 @@ plot(poverty_prediction_model, "trace", "incomeabove 250k")
 plot(poverty_prediction_model, "trace", "incomebelow 10k")
 ```
 
-```{r}
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-#| label: fig-trace3
-#| fig-cap: "Trace plot of employ"
-#| fig-subcap: ["Trace plot of age 35-44", "Trace plot of age 45-54", "Trace plot of age 55-64", "Trace plot of age above 65"]
-#| layout-ncol: 2
-
-plot(poverty_prediction_model, "trace", "age35-44")
-plot(poverty_prediction_model, "trace", "age45-54")
-plot(poverty_prediction_model, "trace", "age55-64")
-plot(poverty_prediction_model, "trace", "ageabove 65")
-```
 
 
 ```{r}
@@ -396,7 +344,7 @@ plot(poverty_prediction_model, "trace", "ageabove 65")
 #| label: fig-rhat
 #| fig-cap: "Rhat plot"
 
-plot(poverty_prediction_model, "rhat") + xlim(-100,1.1)
+plot(poverty_prediction_model, "rhat")
 ```
 ```{r}
 #| echo: false
@@ -404,7 +352,7 @@ plot(poverty_prediction_model, "rhat") + xlim(-100,1.1)
 #| warning: false
 #| message: false
 #| label: fig-modelresults1
-#| fig-cap: "Credible intervals for predictors of support for Biden"
+#| fig-cap: "Credible intervals for predictors of positive poverty status"
 
 modelplot(poverty_prediction_model, conf_level = 0.90, size = 0.2) +
   labs(x = "90% credibility interval")
@@ -417,12 +365,13 @@ modelplot(poverty_prediction_model, conf_level = 0.90, size = 0.2) +
 #| warning: false
 #| message: false
 #| label: fig-modelresults2
-#| fig-cap: "Credible intervals for predictors of support for Biden with x_axis limits"
+#| fig-cap: "Credible intervals for predictors of positive poverty status with x_axis limits"
+
 # Create the model plot
 model_plot <- modelplot(poverty_prediction_model, conf_level = 0.90, size = 0.2)
 
 # Modify the x-axis limits
-model_plot + xlim(-20, 20) +  # Adjust the limits as needed
+model_plot + xlim(-5, 5) +  # Adjust the limits as needed
   labs(x = "90% Credibility Interval")
 ```
 

@@ -17,9 +17,8 @@ library(testthat)
 analysis_data <- read_parquet("data/analysis_data/cleaned_poverty_data.parquet")
 
 # Convert variables to factors
-analysis_data$marital_status <- factor(analysis_data$marital_status)
+analysis_data$marital_status <- factor(analysis_data$mortgage_state)
 analysis_data$income <- factor(analysis_data$income)
-analysis_data$age <- factor(analysis_data$age)
 
 # Create poverty_status variable in binary form
 analysis_data$poverty_status <- ifelse(analysis_data$poverty_status == "In poverty", 1, 0)
@@ -33,7 +32,7 @@ poverty_data_reduced <-
 
 poverty_prediction_model <-
   stan_glm(
-    poverty_status ~ marital_status + income + age,
+    poverty_status ~ income + mortgage_state,
     data = poverty_data_reduced,
     family = binomial(link = "logit"),
     prior = normal(location = 0, scale = 2.5, autoscale = TRUE),

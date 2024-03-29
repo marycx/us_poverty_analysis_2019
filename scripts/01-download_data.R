@@ -16,9 +16,10 @@ library(tidyverse)
 #### Download data ####
 raw_poverty_data <- read_dta('https://www2.census.gov/programs-surveys/supplemental-poverty-measure/datasets/2019-revised/spm2019_newmeth.dta')
 
+# Select the feature: h_seq, spm_poor, spm_tenmortstatus, spm_totval
 raw_poverty_data <-
   raw_poverty_data |>
-  select(spm_poor, spm_hmaritalstatus, spm_totval, spm_hage)
+  select(h_seq, spm_poor, spm_tenmortstatus, spm_totval)
 
 
 #### Save data ####
