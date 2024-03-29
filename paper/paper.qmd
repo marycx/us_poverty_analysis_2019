@@ -178,9 +178,12 @@ poverty_data_reduced <-
   analysis_data |> 
   slice_sample(n = 1000)
 
-posterior_vs_prior(poverty_prediction_model) +
+posterior_vs_prior(poverty_prediction_model, size = 0.3) +
   theme_minimal() +
   theme(legend.position = "bottom") +
+  theme(axis.text.x=element_text(hjust=1, vjust=0.5),
+        text=element_text(size=8)) +
+  guides(color = guide_legend(ncol = 3))+
   coord_flip()
 ```
 
