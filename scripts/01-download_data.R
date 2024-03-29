@@ -18,7 +18,7 @@ raw_poverty_data <- read_dta('https://www2.census.gov/programs-surveys/supplemen
 
 raw_poverty_data <-
   raw_poverty_data |>
-  select(spm_poor, spm_tenmortstatus, spm_totval, spm_hage)
+  select(spm_poor, spm_hmaritalstatus, spm_totval, spm_hage)
 
 
 #### Save data ####

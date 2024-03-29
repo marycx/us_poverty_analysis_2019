@@ -1,6 +1,6 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
+title: "Understanding the Impact of Marital Status, Income, and Age on Individuals' Poverty Status"
+subtitle: "An Analysis of the 2019 Revised Supplemental Poverty Measure Dataset"
 author: 
   - Mary Cheng
 thanks: "Code and data are available at: https://github.com/marycx/us_poverty_analysis_2019.git"
@@ -42,22 +42,162 @@ The remainder of this paper is structured as follows. @sec-data....
 
 # Data {#sec-data}
 
-```{r}
+## Data Source
 
+## Features
+
+```{r}
+#| include: false
+#| warning: false
+#| message: false
+
+# read in raw data
+raw_poverty_data <-  read_csv(here::here("data/raw_data/raw_poverty_data.csv"))
+```
+
+```{r}
+#| label: tbl-raw
+#| tbl-cap: "Preview of the raw 2019 US Supplemental Poverty Measure dataset"
+#| message: false
+#| echo: false
+
+raw_poverty_data[1:5, 1:4] |>
+  kable()
 ```
 
 
-Some of our data is of penguins (@fig-bills), from @palmerpenguins.
+## Data Measurement
+
+## Methodology
+
+```{r}
+#| include: false
+#| warning: false
+#| message: false
+
+# read in cleaned data
+poverty2019 <-  read_parquet(here::here("data/analysis_data/cleaned_poverty_data.parquet"))
+
+poverty2019 <-
+  poverty2019 |>
+  mutate(
+    poverty_status = as_factor(poverty_status),
+    marital_status= factor(
+      marital_status,
+      levels = c(
+      "Married - civilian spouse present",
+      "Married - armed forces spouse present",
+      "Married - spouse absent (excluding separated)",
+      "Widowed",
+      "Divorced",
+      "Separated",
+      "Never Married")
+    ),
+    income = factor(
+      income,
+      levels = c(
+      "below 10k",
+      "10k-50k",
+      "50k-100k",
+      "100k-150k",
+      "150k-200k",
+      "200k-250k",
+      "above 250k")
+    ),
+    age = factor(
+      age,
+      levels = c(
+      "25-34",
+      "35-44",
+      "45-54",
+      "55-64",
+      "above 65")
+    )
+  ) |>
+  select(poverty_status, marital_status, income, age)
+```
+
+```{r}
+#| label: tbl-clean-data
+#| tbl-cap: "Preview of the cleaned 2019 US Supplemental Poverty Measure dataset"
+#| message: false
+#| echo: false
+
+poverty2019[5:9, 1:4] |>
+  kable()
+```
+
+```{r}
+#| label: tbl-summary
+#| tbl-cap: "Statistics summary of the cleaned 2019 US Supplemental Poverty Measure dataset"
+#| message: false
+#| echo: false
+
+poverty2019 |>
+  summary() |>
+  kable(align = "c") %>%
+  kable_styling(font_size = 8)
+```
 
 
+## Data Visualization
+```{r}
+#| label: fig-mortgage
+#| fig-cap: The distribution of poverty status by marital status
+#| echo: false
+#| warning: false
+#| message: false
+poverty2019 |>
+  ggplot(aes(x = marital_status, fill = poverty_status)) +
+  geom_bar(position = "dodge") +
+  coord_flip() +
+  theme_minimal() +
+  theme(axis.text.x=element_text(hjust=1, vjust=0.5),
+        text=element_text(size=6)) +
+  scale_fill_brewer(palette = "Set1") +
+  labs(
+    x = "Marital status",
+    y = "Number of respondents",
+    fill = "Poverty status"
+  )
+```
+```{r}
+#| label: fig-income
+#| fig-cap: The distribution of poverty status by income level
+#| echo: false
+#| warning: false
+#| message: false
+poverty2019 |>
+  ggplot(aes(x = income, fill = poverty_status)) +
+  geom_bar(position = "dodge") +
+  coord_flip() +
+  theme_minimal() +
+  scale_fill_brewer(palette = "Set1") +
+  labs(
+    x = "Income level",
+    y = "Number of respondents",
+    fill = "Poverty status"
+  )
+```
 
-Talk more about it.
-
-And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
-
-
-Talk way more about it. 
-
+```{r}
+#| label: fig-age
+#| fig-cap: The distribution of poverty status by age group
+#| echo: false
+#| warning: false
+#| message: false
+poverty2019 |>
+  ggplot(aes(x = age, fill = poverty_status)) +
+  geom_bar(position = "dodge") +
+  coord_flip() +
+  theme_minimal() +
+  scale_fill_brewer(palette = "Set1") +
+  labs(
+    x = "Age group",
+    y = "Number of respondents",
+    fill = "Poverty status"
+  )
+```
 
 
 # Model
@@ -164,7 +304,7 @@ pp_check(poverty_prediction_model) +
 analysis_data <- read_parquet(here::here("data/analysis_data/cleaned_poverty_data.parquet"))
 
 # Convert variables to factors
-analysis_data$mortgage <- factor(analysis_data$mortgage)
+analysis_data$marital_status <- factor(analysis_data$marital_status)
 analysis_data$income <- factor(analysis_data$income)
 analysis_data$age <- factor(analysis_data$age)
 
@@ -178,12 +318,12 @@ poverty_data_reduced <-
   analysis_data |> 
   slice_sample(n = 1000)
 
-posterior_vs_prior(poverty_prediction_model, size = 0.3) +
+posterior_vs_prior(poverty_prediction_model, size = 0.1) +
   theme_minimal() +
   theme(legend.position = "bottom") +
   theme(axis.text.x=element_text(hjust=1, vjust=0.5),
-        text=element_text(size=8)) +
-  guides(color = guide_legend(ncol = 3))+
+        text=element_text(size=5)) +
+  guides(color = guide_legend(ncol = 4))+
   coord_flip()
 ```
 
@@ -200,13 +340,17 @@ posterior_vs_prior(poverty_prediction_model, size = 0.3) +
 #| message: false
 #| warning: false
 #| label: fig-trace1
-#| fig-cap: "Trace plot of intercept and mortgage"
-#| fig-subcap: ["Trace plot of Intercept", "Trace plot of owner without mortgage", "Trace plot of renter"]
+#| fig-cap: "Trace plot of intercept and marital status"
+#| fig-subcap: ["Trace plot of Intercept", "Trace plot of Married - civilian spouse present", "Trace plot of Married - armed forces spouse present", "Trace plot of Married - spouse absent (excluding separated)", "Trace plot of Widowed", "Trace plot of Separated", "Trace plot of Never Married"]
 #| layout-ncol: 2
 
 plot(poverty_prediction_model, "trace", "(Intercept)")
-plot(poverty_prediction_model, "trace", "mortgageOwner without mortgage")
-plot(poverty_prediction_model, "trace", "mortgageRenter")
+plot(poverty_prediction_model, "trace", "marital_statusMarried - armed forces spouse present")
+plot(poverty_prediction_model, "trace", "marital_statusMarried - civilian spouse present")
+plot(poverty_prediction_model, "trace", "marital_statusMarried - spouse absent (excluding separated)")
+plot(poverty_prediction_model, "trace", "marital_statusNever Married")
+plot(poverty_prediction_model, "trace", "marital_statusSeparated")
+plot(poverty_prediction_model, "trace", "marital_statusWidowed")
 ```
 
 ```{r}
@@ -252,7 +396,7 @@ plot(poverty_prediction_model, "trace", "ageabove 65")
 #| label: fig-rhat
 #| fig-cap: "Rhat plot"
 
-plot(poverty_prediction_model, "rhat")
+plot(poverty_prediction_model, "rhat") + xlim(-100,1.1)
 ```
 ```{r}
 #| echo: false

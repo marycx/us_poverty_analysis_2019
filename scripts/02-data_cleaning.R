@@ -15,15 +15,13 @@ library(arrow)
 #### Clean data ####
 # read in raw data
 raw_poverty_data <-
-  read_csv(
-    "data/raw_data/raw_poverty_data.csv"
-  )
+  read_csv("data/raw_data/raw_poverty_data.csv")
 
 # first rename column names to increase readability
 # filter out ages under 25
 # filter out income is negative
 # poverty status: 1-in poverty; 0-not in poverty
-# mortgage status: 1-Owner with Mortgage; 2-Owner without Mortgage; 3-Renter
+# marital status: 1 Married - civilian spouse present; 2 Married - armed forces spouse present; 3 Married - spouse absent (excluding separated); 4 Widowed; 5 Divorced; 6 Separated; 7 Never Married
 # mutate income and age variables into categorical variables
   # income level: below 10000, 10000 - 49999, 50000 - 99999, 100000 - 1499999, 150000 - 199999, 200000 - 249999, above 250000
   # age group: 25-34, 35-44, 45-54, 55-64, above 65
@@ -32,7 +30,7 @@ cleaned_poverty_data <-
   raw_poverty_data |>
   rename(
     poverty_status = spm_poor, 
-    mortgage = spm_tenmortstatus, 
+    marital_status = spm_hmaritalstatus, 
     income = spm_totval, 
     age = spm_hage
   ) |>
@@ -40,10 +38,14 @@ cleaned_poverty_data <-
   filter(income > 0) |>
   mutate(
     poverty_status = if_else(poverty_status == 1, "In poverty", "Not in poverty"),
-    mortgage = case_when(
-      mortgage == 1 ~ "Owner with mortgage",
-      mortgage == 2 ~ "Owner without mortgage",
-      mortgage == 3 ~ "Renter",
+    marital_status = case_when(
+      marital_status == 1 ~ "Married - civilian spouse present",
+      marital_status == 2 ~ "Married - armed forces spouse present",
+      marital_status == 3 ~ "Married - spouse absent (excluding separated)",
+      marital_status == 4 ~ "Widowed",
+      marital_status == 5 ~ "Divorced",
+      marital_status == 6 ~ "Separated",
+      marital_status == 7 ~ "Never Married"
     ),
     income = case_when(
       income < 10000 ~ "below 10k",
