@@ -36,7 +36,7 @@ if (all(test_poverty_data$poverty_status |>
 correct_mortgage_state <- 
   c(
     "Owner with Mortgage",
-    "Owner without Mortgage or rent-free",
+    "Owner without Mortgage",
     "Renter")
 if (all(test_poverty_data$mortgage_state |>
         unique() %in% correct_mortgage_state)) 

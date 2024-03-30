@@ -37,7 +37,7 @@ cleaned_poverty_data <-
     poverty_status = if_else(poverty_status == 1, "In poverty", "Not in poverty"),
     mortgage_state = case_when(
       mortgage_state == 1 ~ "Owner with Mortgage",
-      mortgage_state == 2 ~ "Owner without Mortgage or rent-free",
+      mortgage_state == 2 ~ "Owner without Mortgage",
       mortgage_state == 3 ~ "Renter"
     ),
     income = case_when(
