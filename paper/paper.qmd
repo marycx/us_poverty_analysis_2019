@@ -36,7 +36,8 @@ library(kableExtra)
 \newpage
 # Introduction
 
-The remainder of this paper is structured as follows. @sec-data....
+The remainder of this paper is structured into different sections. @sec-data demonstrates the data used for our report and includes some tables and graphs to illustrate the different groups of people in our data. @sec-model builds the model and discusses its justification and explanation. @sec-result highlights the results of the predictions using tables and graphs. @sec-discussion contains discussions that conducted based on the findings, which addresses the voting prediction results based on race, region, employment status, and the influence of COVID-19 and in-mail voting systems. Statistical programming language R [@citeR] is used in this report, with packages `tidyverse` [@citeTidyverse], `here` [@citeHere], `rstanarm` [@citeRstanarm], `modelsummary` [@citeModleSummary], `ggplot2` [@citeGgplot2], `knitr` [@citeKnitr], `marginaleffects` [@citeMarginalEffects], `plotly` [@citePlotly], `tibble` [@citeTibble], `margins` [@citeMargins], `testthat` [@citetestthat] and `kableExtra` [@citeKableExtra].
+
 
 ## Estimand
 
@@ -83,7 +84,7 @@ raw_poverty_data[1:5, 1:4] |>
 
 The original dataset includes duplicate responses from the same household. As the dataset features are related to the entire household as a whole, this paper will eliminate duplicate entries, using the variable "h_seq" which is an unique household identifier, to ensure data accuracy and consistency.
 
-The dataset is cleaned by renaming of column headers, defining column classes, and replacing numerical values in the table with their corresponding descriptions from the data dictionary to improve the readability. After cleaning, 62917 rows of data with 3 data features remain. @tbl-clean-data shows a preview of the cleaned dataset.
+The dataset is cleaned by renaming of column headers, defining column classes, grouping the income variable into different income levels (here the assumed facts are that the income unit is in USD and 'k' stands for thousand, eg. 10k = 10,000), and replacing numerical values in the table with their corresponding descriptions from the data dictionary to improve the readability. After cleaning, 62917 rows of data with 3 data features remain. @tbl-clean-data shows a preview of the cleaned dataset.
 
 
 ```{r}
