@@ -1,4 +1,4 @@
-# Understanding the Impact of Mortgage State and Income on Household's Poverty Status": An Analysis of the 2019 Revised Supplemental Poverty Measure Dataset
+# Understanding the Impact of Mortgage State and Income on Household's Poverty Status: An Analysis of the 2019 Poverty Status in the United States
 
 ## Overview
 This repo contains the analysis of household poverty status in the United States in 2019 using the 2019 Revised Supplemental Poverty Measure (SPM) Research Dataset from the United States Census Bureau. A logistic regression model is built to analyze the impact of mortgage state and income level on household's poverty status.
