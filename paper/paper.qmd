@@ -6,7 +6,7 @@ author:
 thanks: "Code and data are available at: https://github.com/marycx/us_poverty_analysis_2019.git"
 date: today
 date-format: long
-abstract: "This paper examines household poverty status in the United States in 2019 using the 2019 Revised Supplemental Poverty Measure (SPM) Research Dataset from the United States Census Bureau. Using logistic regression analysis, we investigate the influence of household income level and mortgage state on poverty status. Our findings reveal a higher likelihood of poverty for households earning less than $50000 and for renters compared to property owners. Conversely, all households with incomes exceeding $100000 are not in poverty. These insights emphasize the need for targeted interventions to address socioeconomic inequalities and promote financial well-being among US households."
+abstract: "This paper examines household poverty status in the United States in 2019 using the 2019 Revised Supplemental Poverty Measure (SPM) Research Dataset from the United States Census Bureau. Using logistic regression analysis, we investigate the influence of household income level and mortgage state on poverty status. Our findings reveal a higher likelihood of poverty for households' total annual earning less than $50000 and for renters compared to property owners. All households with incomes exceeding $100000 are not in poverty. These insights emphasize the need for targeted interventions to address socioeconomic inequalities and promote financial well-being among US households."
 format: pdf
 toc: true
 number-sections: true
@@ -36,10 +36,17 @@ library(kableExtra)
 \newpage
 # Introduction
 
-The remainder of this paper is structured into different sections. @sec-data demonstrates the data used for our report and includes some tables and graphs to illustrate the different groups of people in our data. @sec-model builds the model and discusses its justification and explanation. @sec-result highlights the results of the predictions using tables and graphs. @sec-discussion contains discussions that conducted based on the findings, which addresses the voting prediction results based on race, region, employment status, and the influence of COVID-19 and in-mail voting systems. Statistical programming language R [@citeR] is used in this report, with packages `tidyverse` [@citeTidyverse], `here` [@citeHere], `rstanarm` [@citeRstanarm], `modelsummary` [@citeModleSummary], `ggplot2` [@citeGgplot2], `knitr` [@citeKnitr], `marginaleffects` [@citeMarginalEffects], `plotly` [@citePlotly], `tibble` [@citeTibble], `margins` [@citeMargins], `testthat` [@citetestthat] and `kableExtra` [@citeKableExtra].
+Therefore, it is important for us to analyze why some US household are in poverty in 2019 and how various demographic and financial factors may has an influence on it. Perhaps then we could understand how to reduce the number of households in poverty. We analyze the 2019 Revised SPM Research dataset from the United States Census Bureau (USCB) [@citeCes2020]. USCB is a principal agency of the U.S. Federal Statistical System, responsible for producing data about the American people and economy. We build a prediction model for households poverty status using 2019 Revised SPM dataset. This allows us to discover trends and address potential economic and societal situations that may cause the poverty status for some US households in 2019.
+
+In this paper, a logistic regression model is used to predict the poverty status of households in the United States in 2019, with data from the 2019 Revised Supplemental Poverty Measure Research dataset. Logistic regression is a great choice since it is used to predict binary outcomes, such as poverty status (in poverty or not in poverty). Our analysis focuses on estimating the likelihood of household being in poverty, based on various demographic and financial factors captured in the SPM dataset. We selected data features: mortgage state and household annual total income. The estimand in this paper is the number of households who are in poverty in reality. However, it is difficult to measure the exact number of households who are in poverty since there are millions of people in the United States and not all of them will be assessed due to various difficulties. Therefore, in this paper, we attempt to estimate the estimand using a logistic regression model which is trained using sample dataset from the 2019 Revised Supplemental Poverty Measure Research Data from USCB.
+
+The logistic regression model shows that in the US in 2019, households with an annual total income less than $50000 are almost all in poverty. For households earning $50000 to $100000, the majority is not in poverty, yet a notable amount of them are still in poverty. For households earning above $100000, all of them are not in poverty. Additionally, renters are more likely to be in poverty compared to owners with or without mortgage.
+
+The remainder of this paper is structured into different sections. @sec-data demonstrates the data used for our report and includes some tables and graphs to illustrate the different groups of people in our data. @sec-model builds the model and discusses its justification and explanation. @sec-result highlights the results of the predictions using tables and graphs. @sec-discussion contains discussions that conducted based on the findings, which addresses the poverty status results based on mortgage states and income levels. Statistical programming language R [@citeR] is used in this report, with packages `tidyverse` [@citeTidyverse], `here` [@citeHere], `rstanarm` [@citeRstanarm], `modelsummary` [@citeModleSummary], `ggplot2` [@citeGgplot2], `knitr` [@citeKnitr], `marginaleffects` [@citeMarginalEffects], `plotly` [@citePlotly], `tibble` [@citeTibble], `margins` [@citeMargins], `testthat` [@citetestthat] and `kableExtra` [@citeKableExtra].
 
 
 ## Estimand
+The estimand in this paper is the number of households who are in poverty in reality. However, it is difficult to measure the exact number of households who are in poverty since there are millions of people in the United States and not all of them will be assessed due to various difficulties. Therefore, in this paper, we attempt to estimate the estimand using a logistic regression model which is trained using sample dataset from the 2019 Revised Supplemental Poverty Measure Research Data from USCS.
 
 # Data {#sec-data}
 
@@ -162,7 +169,7 @@ poverty2019 |>
   scale_fill_brewer(palette = "Set1") +
   labs(
     x = "Poverty Status",
-    y = "Number of respondents",
+    y = "Number of households",
     fill = "Mortgage state"
   )
 ```
@@ -183,7 +190,7 @@ poverty2019 |>
   scale_fill_brewer(palette = "Set1") +
   labs(
     x = "Income level",
-    y = "Number of respondents",
+    y = "Number of households",
     fill = "Poverty status"
   )
 ```
