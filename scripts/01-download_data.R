@@ -19,7 +19,7 @@ raw_poverty_data <- read_dta('https://www2.census.gov/programs-surveys/supplemen
 # Select the feature: h_seq, spm_poor, spm_tenmortstatus, spm_totval
 raw_poverty_data <-
   raw_poverty_data |>
-  select(h_seq, spm_poor, spm_tenmortstatus, spm_totval)
+  select(h_seq, spm_poor, spm_tenmortstatus, spm_totval, spm_snapsub, spm_caphousesub, spm_schlunch, spm_engval, spm_wicval, spm_fedtax, spm_eitc, spm_actc, spm_fica, spm_sttax, spm_childsuppd, spm_capwkccxpns, spm_medxpns)
 
 
 #### Save data ####

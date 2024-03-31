@@ -49,8 +49,8 @@ if (all(test_poverty_data$mortgage_state |>
 # check the range of data for income
 correct_income <- 
   c(
-    "below 10k",
-    "10k-50k",
+    "below 5k",
+    "5k-50k",
     "50k-100k",
     "100k-150k",
     "150k-200k",

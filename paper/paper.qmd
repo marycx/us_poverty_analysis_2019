@@ -35,7 +35,7 @@ library(kableExtra)
 
 \newpage
 # Introduction
-Over the last few decades, addressing poverty has remained a persistent issue in the United States, leading to the implementation of multiple policies in an effort to mitigate this problem [@Kearney_Harris]. In 2019, the United States experienced the culmination of an economic expansion that followed the Great Recession, marking the last full year before the onset of COVID-19 pandemic. The robustness of the U.S. economy during this period was evidenced by low poverty rates, indicating a notable decrease in economic hardship characterized by low income. The poverty rate in the United States was estimated to be 10.5% in 2019, down from 11.8% in 2018, marking the fifth consecutive year of decline [@Semega_2022]. Despite various interventions and economic policies, understanding the intricate dynamics influencing household poverty status is still difficult. Therefore, it is important for us to analyze why some US household are in poverty in 2019 and how various demographic and financial factors may has an influence on it. Perhaps then we could understand how to reduce the number of households in poverty. We analyze the 2019 Revised SPM Research dataset from the United States Census Bureau (USCB) [@Bureau_2022]. USCB is an agency of the U.S. Federal Statistical System, responsible for producing data about the American people and economy [@uscb]. We build a prediction model for households poverty status using 2019 Revised SPM dataset. This allows us to discover trends and address potential economic and societal situations that may cause the poverty status for some US households in 2019.
+Over the last few decades, addressing poverty has remained a persistent issue in the United States, leading to the implementation of multiple policies in an effort to mitigate this problem [@Kearney_Harris]. In 2019, the United States experienced the culmination of an economic expansion that followed the Great Recession, marking the last full year before the onset of COVID-19 pandemic. The robustness of the U.S. economy during this period was evidenced by low poverty rates, indicating a notable decrease in economic hardship characterized by low income. The poverty rate in the United States was estimated to be 10.5% in 2019, down from 11.8% in 2018, marking the fifth consecutive year of decline [@Semega_2022]. Despite various interventions and economic policies, understanding the intricate dynamics influencing household poverty status is still difficult. Therefore, it is important for us to analyze why some US household are in poverty in 2019 and how various demographic and financial factors may has an influence on it. Perhaps then we could understand how to reduce the number of households in poverty. We analyze the 2019 Revised Supplemental Poverty Measure (SPM) Research dataset from the United States Census Bureau (USCB) [@Bureau_2022]. USCB is an agency of the U.S. Federal Statistical System, responsible for producing data about the American people and economy [@uscb]. We build a prediction model for households poverty status using 2019 Revised SPM dataset. Supplemental Poverty Measure was developed due to the continued criticism towards the official poverty measure in the US. SPM addresses numerous concerns of official measure critics, and its intent is to provide an improved statistical picture of poverty [@Gesumaria_2015]. This allows us to discover trends and address potential economic and societal situations that may cause the poverty status for some US households in 2019.
 
 In this paper, a logistic regression model is used to predict the poverty status of households in the United States in 2019, with data from the 2019 Revised Supplemental Poverty Measure Research dataset. Logistic regression is a great choice since it is used to predict binary outcomes, such as poverty status (in poverty or not in poverty). Our analysis focuses on estimating the likelihood of household being in poverty, based on various demographic and financial factors captured in the SPM dataset. We selected data features: mortgage state and household annual total income. The estimand in this paper is the number of households who are in poverty in reality. However, it is difficult to measure the exact number of households who are in poverty since there are millions of people in the United States and not all of them will be assessed due to various difficulties. Therefore, in this paper, we attempt to estimate the estimand using a logistic regression model which is trained using sample dataset from the 2019 Revised Supplemental Poverty Measure Research Data from USCB.
 
@@ -50,11 +50,11 @@ The estimand in this paper is the number of households who are in poverty in rea
 # Data {#sec-data}
 
 ## Data Source
-This report uses the 2019 Revised Supplemental Poverty Measure (SPM) Research dataset provided by the United States Census Bureau as our main source of data. The Census Bureau provides information about the people and economy of the United States, with a goal to support economic growth, enhance scientific knowledge, and assist in making informed decisions. The Supplemental Poverty Measure (SPM), similar to the official poverty measure, tackles the shortcomings of poverty assessment. It determines poverty status by gauging resources against a defined standard of living. This standard considers expenditures on essentials like food, clothing, shelter, and utilities, plus a bit more for additional expenses. The resources assessed include disposable income, accounting for taxes and some non-cash benefits, available to cover these needs. In 2019, the dataset contained a total of 157,959 entries.
+This report uses the 2019 Revised Supplemental Poverty Measure (SPM) Research dataset provided by the United States Census Bureau as our main source of data. The Census Bureau provides information about the people and economy of the United States, with a goal to support economic growth, enhance scientific knowledge, and assist in making informed decisions. The official poverty measure has been criticized due to its multiple limitations. For example, it does not consider benefits from most of the largest programs that aid the low-income population. For instance, it uses money income before taxes, so it does not measure the income available for individuals to spend, which for most people is after-tax income. Therefore, any effects of tax credits designed to assist persons with low income are not considered by the official measure. The Supplemental Poverty Measure (SPM), similar to the official poverty measure, tackles the shortcomings of poverty assessment. It determines poverty status by gauging resources against a defined standard of living. This standard considers expenditures on essentials like food, clothing, shelter, and utilities, plus a bit more for additional expenses. The resources assessed include disposable income, accounting for taxes and some non-cash benefits, available to cover these needs [@Gesumaria_2015]. In 2019, the dataset contained a total of 157,959 entries.
 
 
 ## Features
-The original SPM 2019 dataset, which shows in @tbl-raw, contains 157959 data entries and many variables. Since it is difficult to observe such a large dataset, this report will only explore and analyze through several data features. We chose these 4 variables: "h_seq", "spm_poor", "spm_tenmortstatus", "spm_totval", in our analysis. 
+The original SPM 2019 dataset, which shows in @tbl-raw, contains 157959 data entries and many variables. Since it is difficult to observe such a large dataset, this report will only explore and analyze through several data features. We first chose these 17 variables: h_seq, spm_poor, spm_tenmortstatus, spm_totval, spm_snapsub, spm_caphousesub, spm_schlunch, spm_engval, spm_wicval, spm_fedtax, spm_eitc, spm_actc, spm_fica, spm_sttax, spm_childsuppd, spm_capwkccxpns, and spm_medxpns. This is because we want to calculate the income after tax, plus all the subsidies and benefits, minus all the expenses, just like how the SPM does it. If we only choose income before tax to analyze, then our analysis will be like the official poverty measure, which requires improvement.
 
 1. h_seq: Household sequence number, unique identifier for each household.
 
@@ -62,7 +62,33 @@ The original SPM 2019 dataset, which shows in @tbl-raw, contains 157959 data ent
 
 3. spm_tenmortstatus: household's tenure/mortgage status; 1 representing "Owner with Mortgage", 2 representing "Owner without Mortgage or rent-free", and 3 representing "Renter".
 
-4. spm_totval: household's cash income
+4. spm_totval: household's cash income, unit in USD.
+
+5. spm_snapsub: Supplemental Nutrition Assistance Program (SNAP) subsidy, unit in USD.
+
+6. spm_caphousesub: capped housing subsidy, unit in USD.
+
+7. spm_schlunch: school lunch subsidy, unit in USD.
+
+8. spm_engval: energy subsidy, unit in USD.
+
+9. spm_wicval: Women, Infants, and Children subsidy, unit in USD.
+
+10. spm_fedtax: Federal tax, unit in USD.
+
+11. spm_eitc: Federal Earned Income Tax Credit, unit in USD.
+
+12. spm_actc: Additional Child Tax Credit, unit in USD.
+
+13. spm_fica: Federal Insurance Contributions Act and federal retirement contribution, unit in USD.
+
+14. spm_sttax: state tax, unit in USD.
+
+15. spm_childsuppd: child support paid, unit in USD.
+
+16. spm_capwkccxpns: capped work and child care expense, unit in USD.
+
+17. spm_medxpns: Medical Out-Of-Pocket (MOOP) and Medicare Part B subsidy, unit in USD.
 
 ```{r}
 #| include: false
@@ -79,7 +105,11 @@ raw_poverty_data <-  read_csv(here::here("data/raw_data/raw_poverty_data.csv"))
 #| message: false
 #| echo: false
 
-raw_poverty_data[1:5, 1:4] |>
+raw_poverty_data[1:5, 1:6] |>
+  kable()
+raw_poverty_data[1:5, 7:13] |>
+  kable()
+raw_poverty_data[1:5, 13:17] |>
   kable()
 ```
 
@@ -92,7 +122,7 @@ raw_poverty_data[1:5, 1:4] |>
 
 The original dataset includes duplicate responses from the same household. As the dataset features are related to the entire household as a whole, this paper will eliminate duplicate entries, using the variable "h_seq" which is an unique household identifier, to ensure data accuracy and consistency.
 
-The dataset is cleaned by renaming of column headers, defining column classes, grouping the income variable into different income levels (here the assumed facts are that the income unit is in USD and 'k' stands for thousand, eg. 10k = 10,000), and replacing numerical values in the table with their corresponding descriptions from the data dictionary to improve the readability. After cleaning, 62917 rows of data with 3 data features remain. @tbl-clean-data shows a preview of the cleaned dataset.
+First, a new column "income after tax" is created by summing up all incomes, credits, and benefits and subtracting all expenses. Then the dataset is cleaned by renaming of column headers, defining column classes, grouping the income variable into different income levels (here the assumed facts are that the income unit is in USD and 'k' stands for thousand, eg. 5k = 10,000), and replacing numerical values in the table with their corresponding descriptions from the data dictionary to improve the readability. After cleaning, 62990 rows of data with 3 data features remain. @tbl-clean-data shows a preview of the cleaned dataset.
 
 
 ```{r}
@@ -117,8 +147,8 @@ poverty2019 <-
     income = factor(
       income,
       levels = c(
-      "below 10k",
-      "10k-50k",
+      "below 5k",
+      "5k-50k",
       "50k-100k",
       "100k-150k",
       "150k-200k",
@@ -176,25 +206,9 @@ poverty2019 |>
   )
 ```
 
-#```{r}
-##| label: fig-mortgage
-##| fig-cap: The distribution of poverty status by mortgage state
-##| echo: false
-##| warning: false
-##| message: false
-#poverty2019 |>
-#  ggplot(aes(x = poverty_status, fill = mortgage_state)) +
-#  geom_bar(width = 0.2) +
-#  theme_minimal() +
-#  scale_fill_brewer(palette = "Set1") +
-#  labs(
-#    x = "Poverty Status",
-#    y = "Number of households",
-#    fill = "Mortgage state"
-#  )
-#```
 
-@fig-income shows the relationship between household annual total income and their poverty status. We can see that among households earning more than 100k annually, no household is in poverty. For household with income between 50k to 100k, almost all of them are not in poverty with only a very small number of households in poverty. Within the income range of 10k-50k, the majority of households are not in poverty, but there are some families in poverty. However, for households earning below 10k annually, almost all of them are in poverty. This indicates a strong positive correlation between higher income levels and financial stability.
+
+@fig-income shows the relationship between household annual total income and their poverty status. We can see that among households earning more than 100k annually, no household is in poverty. For household with income between 50k to 100k, almost all of them are not in poverty with only a very small number of households in poverty. Within the income range of 5k-50k, the majority of households are not in poverty, but there are some families in poverty. However, for households earning below 5k annually, almost all of them are in poverty. This indicates a strong positive correlation between higher income levels and financial stability.
 
 ```{r}
 #| label: fig-income
@@ -244,27 +258,25 @@ We use the `rstanarm` package [@citeRstanarm] in R [@citeR] to run the model. De
 ### Model justification
 Regarding the relationship between mortgage state and poverty state, we anticipate that both owners without mortgages and owners with mortgages are less likely to experience poverty. Owners without mortgages typically indicate financial stability, as they have already paid off their homes and can allocate financial resources toward household necessities, other than paying back the mortgage / rent. Also, without monthly mortgage or rent payments, their financial burden is reduced, further decreasing the likelihood of poverty. Similarly, owners with mortgages demonstrate financial responsibility by securing loans from banks. The approval of these loans suggests that the bank is confident in owner's ability to manage repayments, indicating a lower possibility of poverty. On the other hand, renters are more likely to experience poverty due to their lack of property ownership and the hidden implication that they do not earn enough to purchase their own property. Renters typically have fewer savings and may earn insufficient salaries to cover rental and essential expenses. Consequently, the combination of rental payments and other financial obligations increases their vulnerability to poverty.
 
-In terms of income levels, we expect a positive relationship between household's income level and their poverty status. This expectation arises from common sense that higher income typically reduces the likelihood of experiencing poverty. If a family is earning a lot of money, then naturally it would not be in poverty. Households that are earning less than 10k annually in the United States obviously have a larger chance in being in poverty due to the high cost of living. Their income probably barely covers or cannot cover for essential expenses such as housing, transportation, or food.
+In terms of income levels, we expect a positive relationship between household's income level and their poverty status. This expectation arises from common sense that higher income typically reduces the likelihood of experiencing poverty. If a family is earning a lot of money, then naturally it would not be in poverty. Households that are earning less than 5k annually in the United States obviously have a larger chance in being in poverty due to the high cost of living. Their income probably barely covers or cannot cover for essential expenses such as housing, transportation, or food.
 
 ## Model Implication
-For posterior predictive checks, in @fig-post_dist, the great fit of the posterior distribution from our logistic regression model with actual poverty data suggests accurate capture of poverty status patterns. This indicates the accuracy of our model's poverty status prediction to the 2019 SPM data. Also, @fig-post_prior compares the posterior to the prior, which shows some parameter changes such as "below 10k" and "10k-50k", as well as the intercept (people who are owners with mortgage and earn 100-150k). The discrepancy for the parameter suggest that our prior may not be very accurate in regards to these specific aspects.
+For posterior predictive checks, in @fig-post_dist, the great fit of the posterior distribution from our logistic regression model with actual poverty data suggests accurate capture of poverty status patterns. This indicates the accuracy of our model's poverty status prediction to the 2019 SPM data. Also, @fig-post_prior compares the posterior to the prior, which shows some parameter changes such as "below 5k" and "5k-50k", as well as the intercept (people who are owners with mortgage and earn 100-150k). The discrepancy for the parameter suggest that our prior may not be very accurate in regards to these specific aspects.
 
 The trace plots in @fig-trace1 and @fig-trace2 do not suggest anything out of the ordinary. Also, with the Rhat plot (@fig-rhat), we can observe that everything is close to 1, and no more than 1.05, which shows the great convergence of Markov chain Monte Carlo for our model.
 
 More detailed explanation of each plot can be found in Appendix @sec-model-details.
 
 # Results {#sec-result}
-Our results are summarized in @tbl-modelresults. Our results generally matches our expectation. To avoid multicollinearity, the model excludes one variable from each category: mortgage state "Owner with mortgage" and income level "100k-150k". The intercept represents the estimated log-odds of being in poverty when all other predictors are held constant at their reference levels. In this case, the estimated log-odds of being in poverty for people who are owner with mortgage and their total household income level to be 100k-150k annually is −6.782. 
+Our results are summarized in @tbl-modelresults. Our results generally matches our expectation. To avoid multicollinearity, the model excludes one variable from each category: mortgage state "Owner with mortgage" and income level "100k-150k". The intercept represents the estimated log-odds of being in poverty when all other predictors are held constant at their reference levels. In this case, the estimated log-odds of being in poverty for people who are owner with mortgage and their total household income level to be 100k-150k annually is −6.896. 
 
-The possibility of households with income level below 10k being in poverty is large. The estimated coefficient of 17.653 suggests that, holding all other variables constant, households with income less than 10k are estimated to have a 17.653 unit increase in the log-odds of being in poverty compared to the reference group. Households with income level at "10k-50k" and "50k-100k" on average are also more likely to be in poverty compared to the reference group, with the estimated coefficient to be 5.478 and 1.640 respectively.
+The possibility of households with income level below 5k being in poverty is large. The estimated coefficient of 17.352 suggests that, holding all other variables constant, households with income less than 5k are estimated to have a 17.352 unit increase in the log-odds of being in poverty compared to the reference group. Households with income level at "5k-50k" and "50k-100k" on average are also more likely to be in poverty compared to the reference group, with the estimated coefficient to be 5.346 and 1.502 respectively.
 
-The mortgage status of individuals also influences their poverty status. As expected, renters exhibit a higher likelihood of experiencing poverty, as shown by the estimated coefficient of 0.359. However, it's important to note that while the coefficient is positive compared to the reference group, its magnitude is relatively small, suggesting a moderate rather than a substantial difference.
-
-The mortgage status of individuals also influences their poverty status. As expected, renters exhibit a higher likelihood of experiencing poverty, as shown by the estimated coefficient of 0.359. However, it's important to note that while the coefficient is positive compared to the reference group, its magnitude is relatively small, suggesting a moderate rather than a substantial difference.
+The mortgage status of individuals also influences their poverty status. As expected, renters exhibit a higher likelihood of experiencing poverty, as shown by the estimated coefficient of 0.645. However, it's important to note that while the coefficient is positive compared to the reference group, its magnitude is relatively small, suggesting a moderate rather than a substantial difference.
 
 @fig-modelresults1 (see @sec-credibility-interval) shows range of coefficient estimates of our model within the 90% probability. Due to the fact that the credibility interval for mortgage "Renter" and "Owners without mortgage" is quite small, it is hard to observe the trend of the 90% credibility intervals of these two variables. Therefore we created @fig-modelresults2 with the x axis limited from -5 to 5. 
 
-Combining @fig-modelresults1 and @fig-modelresults2, we observe statistical significance for the coefficient estimates for household with income below 10k, household income between 10k to 50k, and the intercept, household which owns a property with mortgage and has a income level between 100k to 150k. The estimates are significant because their credibility intervals do not cross 0. The value for the estimates are in log-odds, indicating that if the coefficient is positive, the household is in poverty, if negative, the household is not in poverty.
+Combining @fig-modelresults1 and @fig-modelresults2, we observe statistical significance for the coefficient estimates for household with income below 5k, household income between 5k to 50k, renters, and the intercept, household which owns a property with mortgage and has a income level between 100k to 150k. The estimates are significant because their credibility intervals do not cross 0. The value for the estimates are in log-odds, indicating that if the coefficient is positive, the household is in poverty, if negative, the household is not in poverty.
 
 
 
@@ -329,7 +341,7 @@ pp_check(poverty_prediction_model) +
   theme(legend.position = "bottom")
 ```
 
-@fig-post_prior compares the posterior with the prior. This compares the prior distribution of parameters with the posterior distribution of parameters in our logistic regression model. We can see that half of the model parameters do not change after data are taken into account, while some parameters shift slightly. This shows that the observed data partially matches with our initial belief and expectation about the poverty status of people in the United States in 2019. We can see that for people with income level at "below 10k" and "10k-50k", the posterior distributions shift from their prior after we input observed data; their distribution not crossing 0 at all. This is suggesting that the observed data for "below 10k" and "10k-50k" strongly contradict our initial belief. So the majority of people in US who earns less than a total amount of 50k per household annually was in poverty in 2019. Also, the intercept (people who are owners with mortgage and earn 100-150k) shifts to the left; its distribution not crossing 0. This indicates that the actual observation does not match with our prior belief. People in this category was less likely to be in poverty state in 2019 United States.
+@fig-post_prior compares the posterior with the prior. This compares the prior distribution of parameters with the posterior distribution of parameters in our logistic regression model. We can see that half of the model parameters do not change after data are taken into account, while some parameters shift slightly. This shows that the observed data partially matches with our initial belief and expectation about the poverty status of people in the United States in 2019. We can see that for people with income level at "below 5k" and "5k-50k" and "Renters", the posterior distributions shift from their prior after we input observed data; their distribution not crossing 0 at all. This is suggesting that the observed data for "below 5k" and "5k-50k" strongly contradict our initial belief. So the majority of people in US who earns less than a total amount of 50k per household annually was in poverty in 2019. Also, the intercept (people who are owners with mortgage and earn 100-150k) shifts to the left; its distribution not crossing 0. This indicates that the actual observation does not match with our prior belief. People in this category was less likely to be in poverty state in 2019 United States.
 
 ```{r}
 #| label: fig-post_prior
@@ -393,15 +405,15 @@ plot(poverty_prediction_model, "trace", "mortgage_stateRenter")
 #| warning: false
 #| label: fig-trace2
 #| fig-cap: "Trace plot of income"
-#| fig-subcap: ["Trace plot of income 10k-50k", "Trace plot of income 150k-200k", "Trace plot of income 200k-250k", "Trace plot of income 50k-100k", "Trace plot of income above 250k", "Trace plot of income below 10k"]
+#| fig-subcap: ["Trace plot of income 5k-50k", "Trace plot of income 150k-200k", "Trace plot of income 200k-250k", "Trace plot of income 50k-100k", "Trace plot of income above 250k", "Trace plot of income below 5k"]
 #| layout-ncol: 2
 
-plot(poverty_prediction_model, "trace", "income10k-50k")
+plot(poverty_prediction_model, "trace", "income5k-50k")
 plot(poverty_prediction_model, "trace", "income150k-200k")
 plot(poverty_prediction_model, "trace", "income200k-250k")
 plot(poverty_prediction_model, "trace", "income50k-100k")
 plot(poverty_prediction_model, "trace", "incomeabove 250k")
-plot(poverty_prediction_model, "trace", "incomebelow 10k")
+plot(poverty_prediction_model, "trace", "incomebelow 5k")
 ```
 
 

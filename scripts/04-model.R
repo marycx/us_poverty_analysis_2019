@@ -32,7 +32,7 @@ poverty_data_reduced <-
 
 poverty_prediction_model <-
   stan_glm(
-    poverty_status ~ income + mortgage_state,
+    poverty_status ~ mortgage_state+income,
     data = poverty_data_reduced,
     family = binomial(link = "logit"),
     prior = normal(location = 0, scale = 2.5, autoscale = TRUE),
