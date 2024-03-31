@@ -50,7 +50,7 @@ The estimand in this paper is the number of households who are in poverty in rea
 # Data {#sec-data}
 
 ## Data Source
-This report uses the 2019 Revised Supplemental Poverty Measure (SPM) Research Dataset provided by the United States Census Bureau as our main source of data. The Census Bureau provides information about the people and economy of the United States, with a goal to support economic growth, enhance scientific knowledge, and assist in making informed decisions. The Supplemental Poverty Measure (SPM), similar to the official poverty measure, tackles the shortcomings of poverty assessment. It determines poverty status by gauging resources against a defined standard of living. This standard considers expenditures on essentials like food, clothing, shelter, and utilities, plus a bit more for additional expenses. The resources assessed include disposable income, accounting for taxes and some noncash benefits, available to cover these needs. In 2019, the dataset contained a total of 157,959 entries.
+This report uses the 2019 Revised Supplemental Poverty Measure (SPM) Research dataset provided by the United States Census Bureau as our main source of data. The Census Bureau provides information about the people and economy of the United States, with a goal to support economic growth, enhance scientific knowledge, and assist in making informed decisions. The Supplemental Poverty Measure (SPM), similar to the official poverty measure, tackles the shortcomings of poverty assessment. It determines poverty status by gauging resources against a defined standard of living. This standard considers expenditures on essentials like food, clothing, shelter, and utilities, plus a bit more for additional expenses. The resources assessed include disposable income, accounting for taxes and some non-cash benefits, available to cover these needs. In 2019, the dataset contained a total of 157,959 entries.
 
 
 ## Features
@@ -85,6 +85,8 @@ raw_poverty_data[1:5, 1:4] |>
 
 
 ## Data Measurement
+
+
 
 ## Methodology
 
