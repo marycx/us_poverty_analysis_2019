@@ -1,6 +1,6 @@
 ---
-title: "Understanding the Impact of Mortgage State and Income on Household's Poverty Status"
-subtitle: "An Analysis of the 2019 Revised Supplemental Poverty Measure Dataset"
+title: "Understanding the Impact of Mortgage State and Income on Household Poverty Status"
+subtitle: "An Analysis of Household Poverty Status in the United States in 2019"
 author: 
   - Mary Cheng
 thanks: "Code and data are available at: https://github.com/marycx/us_poverty_analysis_2019.git"
@@ -35,8 +35,7 @@ library(kableExtra)
 
 \newpage
 # Introduction
-
-Therefore, it is important for us to analyze why some US household are in poverty in 2019 and how various demographic and financial factors may has an influence on it. Perhaps then we could understand how to reduce the number of households in poverty. We analyze the 2019 Revised SPM Research dataset from the United States Census Bureau (USCB) [@citeCes2020]. USCB is a principal agency of the U.S. Federal Statistical System, responsible for producing data about the American people and economy. We build a prediction model for households poverty status using 2019 Revised SPM dataset. This allows us to discover trends and address potential economic and societal situations that may cause the poverty status for some US households in 2019.
+Over the last few decades, addressing poverty has remained a persistent issue in the United States, leading to the implementation of multiple policies in an effort to mitigate this problem [@Kearney_Harris]. In 2019, the United States experienced the culmination of an economic expansion that followed the Great Recession, marking the last full year before the onset of COVID-19 pandemic. The robustness of the U.S. economy during this period was evidenced by low poverty rates, indicating a notable decrease in economic hardship characterized by low income. The poverty rate in the United States was estimated to be 10.5% in 2019, down from 11.8% in 2018, marking the fifth consecutive year of decline [@Semega_2022]. Despite various interventions and economic policies, understanding the intricate dynamics influencing household poverty status is still difficult. Therefore, it is important for us to analyze why some US household are in poverty in 2019 and how various demographic and financial factors may has an influence on it. Perhaps then we could understand how to reduce the number of households in poverty. We analyze the 2019 Revised SPM Research dataset from the United States Census Bureau (USCB) [@Bureau_2022]. USCB is an agency of the U.S. Federal Statistical System, responsible for producing data about the American people and economy [@uscb]. We build a prediction model for households poverty status using 2019 Revised SPM dataset. This allows us to discover trends and address potential economic and societal situations that may cause the poverty status for some US households in 2019.
 
 In this paper, a logistic regression model is used to predict the poverty status of households in the United States in 2019, with data from the 2019 Revised Supplemental Poverty Measure Research dataset. Logistic regression is a great choice since it is used to predict binary outcomes, such as poverty status (in poverty or not in poverty). Our analysis focuses on estimating the likelihood of household being in poverty, based on various demographic and financial factors captured in the SPM dataset. We selected data features: mortgage state and household annual total income. The estimand in this paper is the number of households who are in poverty in reality. However, it is difficult to measure the exact number of households who are in poverty since there are millions of people in the United States and not all of them will be assessed due to various difficulties. Therefore, in this paper, we attempt to estimate the estimand using a logistic regression model which is trained using sample dataset from the 2019 Revised Supplemental Poverty Measure Research Data from USCB.
 
@@ -154,7 +153,7 @@ poverty2019 |>
 
 
 ## Data Visualization
-@fig-mortgage illustrates the relationship between mortgage state and poverty status of households. It can be seen that renters constitute the highest proportion of households experiencing poverty, followed by owners without mortgages, and finally owners with mortgages. Conversely, for households who are not in poverty, owners with mortgages represent the largest segment, followed by owners without mortgages, and then renters. In addition, it can be observed that overall a larger proportion of households are not experiencing poverty. Despite variations in poverty rates across different mortgage states, the cumulative data shows economic stability among the majority of households in the United States in 2019.
+@fig-mortgage illustrates the relationship between mortgage state and poverty status of households. It can be seen that renters are the highest proportion of households experiencing poverty, followed by owners without mortgages, and finally owners with mortgages. Conversely, for households who are not in poverty, owners with mortgages represent the largest segment, followed by owners without mortgages, and then renters. In addition, it can be observed that overall a larger proportion of households are not experiencing poverty. Despite variations in poverty rates across different mortgage states, the cumulative data shows economic stability among the majority of households in the United States in 2019.
 
 ```{r}
 #| label: fig-mortgage
@@ -163,16 +162,35 @@ poverty2019 |>
 #| warning: false
 #| message: false
 poverty2019 |>
-  ggplot(aes(x = poverty_status, fill = mortgage_state)) +
-  geom_bar(width = 0.2) +
+  ggplot(aes(x = mortgage_state, fill = poverty_status)) +
+  geom_bar(position = "dodge", width = 0.5) +
   theme_minimal() +
+  coord_flip() +
   scale_fill_brewer(palette = "Set1") +
   labs(
-    x = "Poverty Status",
+    x = "Mortgage state",
     y = "Number of households",
-    fill = "Mortgage state"
+    fill = "Poverty Status"
   )
 ```
+
+#```{r}
+##| label: fig-mortgage
+##| fig-cap: The distribution of poverty status by mortgage state
+##| echo: false
+##| warning: false
+##| message: false
+#poverty2019 |>
+#  ggplot(aes(x = poverty_status, fill = mortgage_state)) +
+#  geom_bar(width = 0.2) +
+#  theme_minimal() +
+#  scale_fill_brewer(palette = "Set1") +
+#  labs(
+#    x = "Poverty Status",
+#    y = "Number of households",
+#    fill = "Mortgage state"
+#  )
+#```
 
 @fig-income shows the relationship between household annual total income and their poverty status. We can see that among households earning more than 100k annually, no household is in poverty. For household with income between 50k to 100k, almost all of them are not in poverty with only a very small number of households in poverty. Within the income range of 10k-50k, the majority of households are not in poverty, but there are some families in poverty. However, for households earning below 10k annually, almost all of them are in poverty. This indicates a strong positive correlation between higher income levels and financial stability.
 
@@ -184,7 +202,7 @@ poverty2019 |>
 #| message: false
 poverty2019 |>
   ggplot(aes(x = income, fill = poverty_status)) +
-  geom_bar(position = "dodge") +
+  geom_bar(position = "dodge", width = 0.5) +
   coord_flip() +
   theme_minimal() +
   scale_fill_brewer(palette = "Set1") +
@@ -196,7 +214,8 @@ poverty2019 |>
 ```
 
 \newpage
-# Model
+
+# Model {#sec-model}
 In our analysis, we utilized a Bayesian logistic regression model to examine the relationship between poverty status and two demographic factors, mortgage status and income of the household. Background details and diagnostics are included in [Appendix -@sec-model-details].
 
 ## Model set-up
@@ -232,7 +251,7 @@ The trace plots in @fig-trace1 and @fig-trace2 do not suggest anything out of th
 
 More detailed explanation of each plot can be found in Appendix @sec-model-details.
 
-# Results
+# Results {#sec-result}
 Our results are summarized in @tbl-modelresults. Our results generally matches our expectation. To avoid multicollinearity, the model excludes one variable from each category: mortgage state "Owner with mortgage" and income level "100k-150k". The intercept represents the estimated log-odds of being in poverty when all other predictors are held constant at their reference levels. In this case, the estimated log-odds of being in poverty for people who are owner with mortgage and their total household income level to be 100k-150k annually is −6.782. 
 
 The possibility of households with income level below 10k being in poverty is large. The estimated coefficient of 17.653 suggests that, holding all other variables constant, households with income less than 10k are estimated to have a 17.653 unit increase in the log-odds of being in poverty compared to the reference group. Households with income level at "10k-50k" and "50k-100k" on average are also more likely to be in poverty compared to the reference group, with the estimated coefficient to be 5.478 and 1.640 respectively.
@@ -267,7 +286,7 @@ modelsummary(
 ```
 
 
-# Discussion
+# Discussion {#sec-discussion}
 
 ## Relationship betwen Mortgage State and Poverty Status
 
