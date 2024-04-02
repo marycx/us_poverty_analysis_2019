@@ -53,39 +53,6 @@ This report uses the 2019 Revised Supplemental Poverty Measure (SPM) Research da
 ## Features
 The original SPM 2019 dataset, which shows in @tbl-raw, contains 157959 data entries and many variables. Since it is difficult to observe such a large dataset, this report will only explore and analyze through several data features. We first chose these 17 variables: h_seq, spm_poor, spm_tenmortstatus, spm_totval, spm_snapsub, spm_caphousesub, spm_schlunch, spm_engval, spm_wicval, spm_fedtax, spm_eitc, spm_actc, spm_fica, spm_sttax, spm_childsuppd, spm_capwkccxpns, and spm_medxpns. This is because we want to calculate the income after tax, plus all the subsidies and benefits, minus all the expenses, just like how the SPM does it [@sgp2019]. If we only choose income before tax to analyze, then our analysis will be like the official poverty measure, which requires improvement.
 
-1. h_seq: Household sequence number, unique identifier for each household.
-
-2. spm_poor: the poverty status; 1 representing "In poverty" and 0 represneting "Not in poverty".
-
-3. spm_tenmortstatus: household's tenure/mortgage status; 1 representing "Owner with Mortgage", 2 representing "Owner without Mortgage or rent-free", and 3 representing "Renter".
-
-4. spm_totval: household's cash income, unit in USD.
-
-5. spm_snapsub: Supplemental Nutrition Assistance Program (SNAP) subsidy, unit in USD.
-
-6. spm_caphousesub: capped housing subsidy, unit in USD.
-
-7. spm_schlunch: school lunch subsidy, unit in USD.
-
-8. spm_engval: energy subsidy, unit in USD.
-
-9. spm_wicval: Women, Infants, and Children subsidy, unit in USD.
-
-10. spm_fedtax: Federal tax, unit in USD.
-
-11. spm_eitc: Federal Earned Income Tax Credit, unit in USD.
-
-12. spm_actc: Additional Child Tax Credit, unit in USD.
-
-13. spm_fica: Federal Insurance Contributions Act and federal retirement contribution, unit in USD.
-
-14. spm_sttax: state tax, unit in USD.
-
-15. spm_childsuppd: child support paid, unit in USD.
-
-16. spm_capwkccxpns: capped work and child care expense, unit in USD.
-
-17. spm_medxpns: Medical Out-Of-Pocket (MOOP) and Medicare Part B subsidy, unit in USD.
 
 ```{r}
 #| include: false
@@ -108,6 +75,22 @@ raw_poverty_data[1:5, 7:13] |>
   kable()
 raw_poverty_data[1:5, 13:17] |>
   kable()
+```
+
+```{r}
+#| label: tbl-feature
+#| tbl-cap: "Preview of the raw 2019 US Supplemental Poverty Measure dataset"
+#| message: false
+#| echo: false
+#| warning: false
+
+# show data feature
+feature <- tibble(
+  Data_feature = c("h_seq", "spm_poor", "spm_tenmortstatus", "spm_totval", "spm_snapsub", "spm_caphousesub", "spm_schlunch", "spm_engval", "spm_wicval", "spm_fedtax", "spm_eitc", "spm_actc", "spm_fica", "spm_sttax", "spm_childsuppd", "spm_capwkccxpns", "spm_medxpns"),
+  Data_definition = c("Household sequence number, unique identifier for each household.", "the poverty status; 1 representing 'in poverty' and 0 representing 'not in poverty'.", "household's tenure/mortgage status; 1 representing 'owner with Mortgage', 2 representing 'owner without Mortgage or rent-free', and 3 representing 'renter'.", "household's cash income, unit in USD.", "Supplemental Nutrition Assistance Program (SNAP) subsidy, unit in USD.", "capped housing subsidy, unit in USD.", "school lunch subsidy, unit in USD.", "energy subsidy, unit in USD.", "Women, Infants, and Children subsidy, unit in USD.", "Federal tax, unit in USD.", "Federal Earned Income Tax Credit, unit in USD.", "Additional Child Tax Credit, unit in USD.", "Federal Insurance Contributions Act and federal retirement contribution, unit in USD.", "state tax, unit in USD.", "child support paid, unit in USD.", "capped work and child care expense, unit in USD.", "Medical Out-Of-Pocket (MOOP) and Medicare Part B subsidy, unit in USD.")
+)
+kable(feature, "latex") %>%
+  column_spec(2, width = "30em")
 ```
 
 
