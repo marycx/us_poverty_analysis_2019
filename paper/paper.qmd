@@ -51,7 +51,7 @@ This report uses the 2019 Revised Supplemental Poverty Measure (SPM) Research da
 
 
 ## Features
-The original SPM 2019 dataset, which shows in @tbl-raw, contains 157959 data entries and many variables. Since it is difficult to observe such a large dataset, this report will only explore and analyze through several data features. We first chose these 17 variables: h_seq, spm_poor, spm_tenmortstatus, spm_totval, spm_snapsub, spm_caphousesub, spm_schlunch, spm_engval, spm_wicval, spm_fedtax, spm_eitc, spm_actc, spm_fica, spm_sttax, spm_childsuppd, spm_capwkccxpns, and spm_medxpns. This is because we want to calculate the income after tax, plus all the subsidies and benefits, minus all the expenses, just like how the SPM does it [@sgp2019]. If we only choose income before tax to analyze, then our analysis will be like the official poverty measure, which requires improvement.
+The original SPM 2019 dataset, which shows in @tbl-raw, contains 157959 data entries and many variables. Since it is difficult to observe such a large dataset, this report will only explore and analyze through several data features. We first chose these 17 variables: h_seq, spm_poor, spm_tenmortstatus, spm_totval, spm_snapsub, spm_caphousesub, spm_schlunch, spm_engval, spm_wicval, spm_fedtax, spm_eitc, spm_actc, spm_fica, spm_sttax, spm_childsuppd, spm_capwkccxpns, and spm_medxpns. Their explanation are in @tbl-feature. This is because we want to calculate the income after tax, plus all the subsidies and benefits, minus all the expenses, just like how the SPM does it [@sgp2019]. If we only choose income before tax to analyze, then our analysis will be like the official poverty measure, which requires improvement. 
 
 
 ```{r}
@@ -77,25 +77,9 @@ raw_poverty_data[1:5, 13:17] |>
   kable()
 ```
 
-```{r}
-#| label: tbl-feature
-#| tbl-cap: "Preview of the raw 2019 US Supplemental Poverty Measure dataset"
-#| message: false
-#| echo: false
-#| warning: false
-
-# show data feature
-feature <- tibble(
-  Data_feature = c("h_seq", "spm_poor", "spm_tenmortstatus", "spm_totval", "spm_snapsub", "spm_caphousesub", "spm_schlunch", "spm_engval", "spm_wicval", "spm_fedtax", "spm_eitc", "spm_actc", "spm_fica", "spm_sttax", "spm_childsuppd", "spm_capwkccxpns", "spm_medxpns"),
-  Data_definition = c("Household sequence number, unique identifier for each household.", "the poverty status; 1 representing 'in poverty' and 0 representing 'not in poverty'.", "household's tenure/mortgage status; 1 representing 'owner with Mortgage', 2 representing 'owner without Mortgage or rent-free', and 3 representing 'renter'.", "household's cash income, unit in USD.", "Supplemental Nutrition Assistance Program (SNAP) subsidy, unit in USD.", "capped housing subsidy, unit in USD.", "school lunch subsidy, unit in USD.", "energy subsidy, unit in USD.", "Women, Infants, and Children subsidy, unit in USD.", "Federal tax, unit in USD.", "Federal Earned Income Tax Credit, unit in USD.", "Additional Child Tax Credit, unit in USD.", "Federal Insurance Contributions Act and federal retirement contribution, unit in USD.", "state tax, unit in USD.", "child support paid, unit in USD.", "capped work and child care expense, unit in USD.", "Medical Out-Of-Pocket (MOOP) and Medicare Part B subsidy, unit in USD.")
-)
-kable(feature, "latex") %>%
-  column_spec(2, width = "30em")
-```
-
 
 ## Data Measurement
-
+The data is mainly collected by surveys. Portions of SPM resources, such as values of taxes and some non-cash benefits, are not asked of respondents and are estimated using models. The models takes in administrative data where appropriate to ensure that the estimated amounts reflect external totals and distributions [@spm].
 
 
 ## Methodology
@@ -280,7 +264,7 @@ modelsummary(
   statistic = "mad"
   )
 ```
-\newpage
+
 
 # Discussion {#sec-discussion}
 
@@ -293,11 +277,20 @@ The relationship between a household's income after tax and its poverty status i
 For household in poverty, escaping poverty is tough, but the US government and communities are stepping up to help. For example, single parents often struggle with low incomes. But they can get help from government programs such as the Supplemental Nutrition Assistance Program (SNAP) [@snap], commonly known as food stamps, which provides eligible low-income individuals and families with funds to purchase nutritious food. They can also receive child support payments to help cover expenses for their kids. Families with low incomes and lots of kids can also get help. Programs like the Child Tax Credit (CTC) [@ctc], which provides tax credits to eligible families with qualifying children. Other programs, like housing assistance and Medicaid, provide support with things like affordable housing and healthcare. These programs are all aimed at helping families in need to get back on their feet and improve their poverty situation.
 
 
-## mortgage interest rate etc...
+## Limitations
 
-## Weaknesses and next steps
+### Data Consideration
+Firstly, the data are estimates based on a sample of the population, so it cannot represent the whole population of the United States. This creates margins of error. Also, since the SPM poverty estimates are from household survey data, the data might be affected by issues such as under-reporting, over-reporting, or making up data. Some people might not remember the exact value of some data, for example, not all people have or know that they receive income from government benefit programs, so they might be reporting it inaccurately. In addition, some SPM resources, such as taxes and non-cash benefits, are estimated using models. The models use administrative data, but the estimated amounts are not perfect.
 
-Weaknesses and next steps should also be included.
+### Measurement of Medical Subsidies
+Even the SPM accounts for expenses for healthcare and insurance by subtracting them from family resources, it does not directly value health insurance provided as a resource [@spm]. The treatment of medical expenses does not take account of all the economic effects of subsidized medical care, for example, there are families who purchase a less comprehensive insurance plan and decide to forego some health care. Moreover, some of the largest non-cash benefits programs (Medicare, Medicaid, etc.) are not explicitly taken into account when determining poverty status. 
+
+
+### Lump sum nature of tax credit
+In the SPM, taxes paid and tax credits in the year that are earned are include [@spm]d. But typically the credit would not appear in the family income until the next year. Also, tax credits are given as a lump sum, but poverty is a something that might happen anytime in the year. For example, a family may experience poverty because someone lost a job and cannot find another, so the family is in poverty. The tax credit may or may not provide relief depening on the timing in the year and the severity of expenses faced by the family throughout the year. So it is not very accurate that the SPM examine resources in a full calendar year compared with a threshold based on the calendar year. The family might have experienced 11 months of poverty before they got their tax credits in the 12th month.
+
+## Future Steps
+not done
 
 \newpage
 
@@ -305,6 +298,23 @@ Weaknesses and next steps should also be included.
 
 # Appendix {-}
 
+# Data Features
+
+```{r}
+#| label: tbl-feature
+#| tbl-cap: "Preview of the raw 2019 US Supplemental Poverty Measure dataset"
+#| message: false
+#| echo: false
+#| warning: false
+
+# show data feature
+feature <- tibble(
+  Data_feature = c("h_seq", "spm_poor", "spm_tenmortstatus", "spm_totval", "spm_snapsub", "spm_caphousesub", "spm_schlunch", "spm_engval", "spm_wicval", "spm_fedtax", "spm_eitc", "spm_actc", "spm_fica", "spm_sttax", "spm_childsuppd", "spm_capwkccxpns", "spm_medxpns"),
+  Data_definition = c("Household sequence number, unique identifier for each household.", "the poverty status: 1 representing 'in poverty' and 0 representing 'not in poverty'.", "household's tenure/mortgage status: 1 representing 'owner with Mortgage', 2 representing 'owner without Mortgage or rent-free', and 3 representing 'renter'.", "household's cash income, unit in USD.", "Supplemental Nutrition Assistance Program (SNAP) subsidy, unit in USD.", "capped housing subsidy, unit in USD.", "school lunch subsidy, unit in USD.", "energy subsidy, unit in USD.", "Women, Infants, and Children subsidy, unit in USD.", "Federal tax, unit in USD.", "Federal Earned Income Tax Credit, unit in USD.", "Additional Child Tax Credit, unit in USD.", "Federal Insurance Contributions Act and federal retirement contribution, unit in USD.", "state tax, unit in USD.", "child support paid, unit in USD.", "capped work and child care expense, unit in USD.", "Medical Out-Of-Pocket (MOOP) and Medicare Part B subsidy, unit in USD.")
+)
+kable(feature, "latex") %>%
+  column_spec(2, width = "30em")
+```
 # Model details {#sec-model-details}
 
 ## Posterior predictive check
