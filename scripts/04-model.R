@@ -26,6 +26,7 @@ analysis_data$poverty_status <- ifelse(analysis_data$poverty_status == "In pover
 # Model 1 for n = 1000
 set.seed(215)
 
+# get the reduced dataset of only 1000 randomly selected data entries
 poverty_data_reduced <- 
   analysis_data |> 
   slice_sample(n = 1000)
