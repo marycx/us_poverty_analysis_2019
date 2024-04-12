@@ -79,12 +79,11 @@ raw_poverty_data[1:5, 13:17] |>
 
 
 ## Data Measurement
-The data is mainly collected by surveys. Portions of SPM resources, such as values of taxes and some non-cash benefits, are not asked of respondents and are estimated using models. The models takes in administrative data where appropriate to ensure that the estimated amounts reflect external totals and distributions [@spm].
+The data was mainly collected by surveys. Portions of SPM resources, such as values of taxes and some non-cash benefits, were not asked of respondents and were estimated using models. However, the estimated amounts are not perfect. For example, they found that the estimated total benefits from both the Earned Income Tax Credit and the child tax credit are lower than those found when examining federal income tax returns [@spm].
 
 
 ## Methodology
-
-The original dataset includes duplicate responses from the same household. As the dataset features are related to the entire household as a whole, this paper will eliminate duplicate entries, using the variable "h_seq" which is an unique household identifier, to ensure data accuracy and consistency.
+The original dataset includes duplicated responses from the same household. As the report is analyzing the household poverty status, I will eliminate duplicate entries, using the variable "h_seq" which is an unique household identifier, to ensure data accuracy and consistency.
 
 First, a new column "income after tax" is created by summing up all incomes, credits, and benefits and subtracting all expenses. Then the dataset is cleaned by renaming of column headers, defining column classes, grouping the income variable into different income levels (here the assumed facts are that the income unit is in USD and 'k' stands for thousand, eg. 5k = 10,000), and replacing numerical values in the table with their corresponding descriptions from the data dictionary to improve the readability. After cleaning, 62990 rows of data with 3 data features remain. @tbl-clean-data shows a preview of the cleaned dataset.
 
