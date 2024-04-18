@@ -145,7 +145,7 @@ poverty2019 |>
 
 
 ## Data Visualization
-@tbl-mortgage illustrates the relationship between mortgage state and poverty status of households. It can be seen that renters are the highest proportion of households experiencing poverty, followed by owners without mortgages, and finally owners with mortgages. Conversely, for households who are not in poverty, owners with mortgages represent the largest segment, followed by owners without mortgages, and then renters. In addition, it can be observed that overall a larger proportion of households are not experiencing poverty. Despite variations in poverty rates across different mortgage states, the cumulative data shows economic stability among the majority of households in the United States in 2019.
+@tbl-mortgage and @tbl-mortgage illustrates the relationship between mortgage state and poverty status of households. It can be seen that renters are the highest proportion of households experiencing poverty, followed by owners without mortgages, and finally owners with mortgages. Conversely, for households who are not in poverty, owners with mortgages represent the largest segment, followed by owners without mortgages, and then renters. In addition, it can be observed that overall a larger proportion of households are not experiencing poverty. Despite variations in poverty rates across different mortgage states, the cumulative data shows economic stability among the majority of households in the United States in 2019.
 ```{r}
 #| label: tbl-mortgage
 #| tbl-cap: "The distribution of poverty status by mortgage state"
@@ -177,7 +177,7 @@ kable(mortgage,
 ```
 
 
-```{r fig.show='hide'}
+```{r}
 #| label: fig-mortgage
 #| fig-cap: The distribution of poverty status by mortgage state
 #| echo: false
@@ -201,7 +201,7 @@ poverty2019 |>
 
 
 
-@tbl-income shows the relationship between household annual total income and their poverty status. We can see that among households earning more than 100k annually, no household is in poverty. For household with income between 50k to 100k, almost all of them are not in poverty with only a very small number of households in poverty. Within the income range of 5k-50k, the majority of households are not in poverty, but there are some families in poverty. However, for households earning below 5k annually, all of them are in poverty. This indicates a strong positive correlation between higher income levels and financial stability.
+@fig-income and @tbl-income shows the relationship between household annual total income and their poverty status. We can see that among households earning more than 100k annually, no household is in poverty. For household with income between 50k to 100k, almost all of them are not in poverty with only a very small number of households in poverty. Within the income range of 5k-50k, the majority of households are not in poverty, but there are some families in poverty. However, for households earning below 5k annually, all of them are in poverty. This indicates a strong positive correlation between higher income levels and financial stability.
 
 
 ```{r}
@@ -247,7 +247,7 @@ kable(income_level,
 
 
 
-```{r fig.show='hide'}
+```{r}
 #| label: fig-income
 #| fig-cap: The distribution of poverty status by income level
 #| echo: false
