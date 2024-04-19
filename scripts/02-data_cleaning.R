@@ -15,7 +15,7 @@ library(arrow)
 #### Clean data ####
 # read in raw data
 raw_poverty_data <-
-  read_csv("data/raw_data/raw_poverty_data.csv")
+  read_parquet("data/raw_data/raw_poverty_data.parquet")
 
 # Calculate money income after tax, minus expenses, plus credits and benefits
 raw_poverty_data$income_after_tax <- raw_poverty_data$spm_totval + raw_poverty_data$spm_snapsub + raw_poverty_data$spm_caphousesub + raw_poverty_data$spm_schlunch + raw_poverty_data$spm_engval + raw_poverty_data$spm_wicval - raw_poverty_data$spm_fedtax + raw_poverty_data$spm_eitc + raw_poverty_data$spm_actc - raw_poverty_data$spm_fica - raw_poverty_data$spm_sttax - raw_poverty_data$spm_childsuppd - raw_poverty_data$spm_capwkccxpns - raw_poverty_data$spm_medxpns
