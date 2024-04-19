@@ -5,6 +5,7 @@ author:
 thanks: "Code and data are available at: https://github.com/marycx/us_poverty_analysis_2019.git"
 date: today
 date-format: long
+abstract: "Provides access to 2019 Revised Supplemental Poverty Measure Research Dataset about American households' demographic and financial information. This enhances how reproducible research is that uses this data."
 format: pdf
 number-sections: true
 bibliography: references.bib
