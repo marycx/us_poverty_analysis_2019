@@ -11,6 +11,7 @@
 #### Workspace setup ####
 library(haven)
 library(tidyverse)
+library(arrow)
 
 
 #### Download data ####
@@ -23,6 +24,6 @@ raw_poverty_data <-
 
 
 #### Save data ####
-write_csv(raw_poverty_data, "data/raw_data/raw_poverty_data.csv") 
+write_parquet(raw_poverty_data, sink = "data/raw_data/raw_poverty_data.parquet")
 
          
